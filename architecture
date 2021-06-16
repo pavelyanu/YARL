@@ -1,0 +1,151 @@
+
+--------------------A bit more specific MVC----------------------------
+
+Model -> Game
+^        Game -> Console -> User
+|	 Game <-------------User
+Model <- Game
+
+--------------------SadConsole's class responcible for render and catching user input
+
+Game:
+    Console console
+    Model model
+    void HandleInput()
+    void Update()
+    Render()
+    Run()
+
+--------------------Model responsible for the state of the game--------
+
+Model:
+    LevelFactory levelFactory
+    Level current
+    MonsterFactory monsterfacrory
+    List<Monster> monsters
+    ItemFactory itemFactory
+    List<Item> items
+    List<Entity> initiative
+    int initiativeTracker
+    Player palyer
+    Game game
+    bool inCombat
+    void Update()
+    string[][] Draw()
+    void ApplyAction(IAction)
+    void ProcessCombat()
+    void ProcessPeace()
+    void ProcessPlayerInCombat()
+    void ProcessPlayerInPeace()
+    void ProcessMonster()
+    void ProcessAction(Action)
+    void MakeInitiative()
+    void PopulateLevel()
+
+--------------------Classes and Interfaces for level layout---
+
+Level:
+    int hight
+    int width
+    List<ITile> tiles
+    strign[][] Draw()
+
+IDrawable:
+    char Draw()
+
+abstract Tile: IDrawable
+    Point position
+
+Door: Tile
+    bool opened
+    bool locked
+    Point position
+    char Draw()
+
+Floor: Tile
+    Point position
+    char Draw()
+
+Wall: Tile
+    Point position
+    char Draw()
+
+Corridor: Tile
+    Point position
+    char Draw()
+
+--------------------Not so much of a layout but close------------------
+
+ILootable:
+    void Put()
+    void Take()
+
+PileOfLoot: Tile, ILootable
+    Point position
+    List<Item> items
+    void Put()
+    void Take()
+    char Draw()
+
+Chest: Tile, ILootable
+    Point position
+    List<Item> items
+    bool opened
+    void Put()
+    void Take()
+    char Draw()
+
+--------------------Classes and interfaces connected to player and monsters
+
+IEntity: 
+    Dictionary<string, int> stats // to be removed
+    int health
+    int movement
+    int armour_class
+    List<IAction> actions
+    Point position
+
+abstract Entity: IEntity, IDrawable
+    Dictionary<string, int> stats // to be removed
+    int health
+    int movement
+    int armour_class
+    Point position
+    List<IAction> actions
+    char Draw()
+    
+
+Monster: Entity
+    Dictionary<string, int> stats // to be removed
+    int health
+    int movement
+    int armour_class
+    Point position
+    List<IAction> actions
+    List<Item> loot
+    char Draw()
+    IAction MakeMove(Game game)
+
+Player: Entity
+    Dictionary<string, int> stats // to be removed
+    int health
+    int movement
+    int armour_class
+    Point position
+    List<IAction> actions
+    List<Item> inverntory
+    char Draw()
+    
+ -------------------Action classes--------------------------------------
+
+IAction:
+    IEntity target
+
+Attack: IAction
+    IEntity target
+    int attackModifier
+    int damage
+
+
+
+
