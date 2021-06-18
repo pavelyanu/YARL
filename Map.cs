@@ -53,6 +53,19 @@ namespace YARL
 	    tiles[tile.position] = tile;
 	}
 
+	public bool isDoor(Vector2 v)
+	{
+	    if (this[v] is not null && this[v].glyph == '+')
+		return true;
+	    return false;
+	}
+
+	public bool IsDoor(int x, int y)
+	{
+	    var v = new Vector2(x, y);
+	    return isDoor(v);
+	}
+
 	public IEnumerable<Tile> GetLine(
 	    int xOrigin, int yOrigin, int xDestination, int yDestination
 	)

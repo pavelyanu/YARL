@@ -18,6 +18,7 @@ namespace YARL
 	private readonly Map _map;
 	private Random random;
 	private StringBuilder sb;
+	private TileFactory tileFactory;
 
 	public MapGenerator( int width, int height, int maxRooms, int roomMaxSize, int roomMinSize, int level )
 	{
@@ -30,6 +31,7 @@ namespace YARL
 	    _map = new Map(width, height);
 	    random = new Random();
 	    sb = new StringBuilder();
+	    tileFactory = new TileFactory();
 	}
 
 	public Map CreateMap()
@@ -102,9 +104,7 @@ namespace YARL
 	    {
 		for ( int y = room.Top + 1; y < room.Bottom; y++ )
 		{
-
-		    Floor floor = new Floor(new Vector2(x, y));
-		    _map.SetCell(floor);
+		    _map.SetCell(tileFactory.Floor(x, y));
 		}
 	    }
 	}
@@ -113,8 +113,7 @@ namespace YARL
 	{
 	    for ( int x = Math.Min( xStart, xEnd ); x <= Math.Max( xStart, xEnd ); x++ )
 	    {
-		Floor floor = new Floor(new Vector2(x, yPosition));
-		_map.SetCell(floor);
+		_map.SetCell(tileFactory.Floor(x, yPosition));
 	    }
 	}
 
@@ -122,8 +121,7 @@ namespace YARL
 	{
 	    for ( int y = Math.Min( yStart, yEnd ); y <= Math.Max( yStart, yEnd ); y++ )
 	    {	
-		Floor floor = new Floor(new Vector2(xPosition, y));
-		_map.SetCell(floor);
+		_map.SetCell(tileFactory.Floor(xPosition, y));
 	    }
 	}
 
@@ -150,8 +148,7 @@ namespace YARL
 		if ( IsPotentialDoor( cell ) )
 		{
 		    Log.Information($"The cell {LogTile(cell)} is a door");
-		    Door door = new Door(new Vector2(cell.position.X, cell.position.Y));
-		    _map.SetCell(door);
+		    _map.SetCell(tileFactory.Door(new Vector2(cell.position.X, cell.position.Y)));
 		}
 	    }
 	}
@@ -176,11 +173,11 @@ namespace YARL
 	    Log.Information($"top - {LogTile(top)}");
 	    Log.Information($"bottom - {LogTile(bottom)}");
 
-	    if ( _map[(int) cell.position.X, (int) cell.position.Y ] is Door ||
-		    _map[(int) right.position.X, (int) right.position.Y ] is Door ||
-		    _map[(int) left.position.X, (int) left.position.Y ] is Door ||
-		    _map[(int) top.position.X, (int) top.position.Y ] is Door ||
-		    _map[(int) bottom.position.X, (int) bottom.position.Y ] is Door )
+	    if ( _map.isDoor(cell.position) ||
+		    _map.isDoor(right.position) ||
+		    _map.isDoor(left.position) ||
+		    _map.isDoor(top.position) ||
+		    _map.isDoor(bottom.position))
 	    {
 		Log.Information($"the door near {LogTile(cell)} already exists");	
 		return false;
@@ -207,8 +204,7 @@ namespace YARL
 		for (int y = 0; y < _height; y++) {
 		    if (map[x, y] is null)
 		    {
-			Wall wall = new Wall(x, y);
-			map.SetCell(wall);
+			map.SetCell(tileFactory.Wall(x, y));
 		    }
 		}
 	    }

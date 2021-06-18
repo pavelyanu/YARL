@@ -1,13 +1,24 @@
 using System.Numerics;
-using YARL;
 
 namespace YARL
 {
-    public abstract class Tile: IDrawable
+    public class Tile: IDrawable
     {
-	public abstract Vector2 position { get; protected set; } 
-	public abstract bool walkable { get; protected set; }
-	public abstract char Draw();
+	public Vector2 position { get; protected set; } 
+	public bool walkable { get; protected set; }
+	public char glyph {get; protected set; }
+
+	public Tile(Vector2 v, bool w, char g)
+	{
+	    position = v;
+	    walkable = w;
+	    glyph = g;
+	}
+
+	public char Draw()
+	{
+	    return glyph;
+	}
     }
 }
 
