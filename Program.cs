@@ -9,19 +9,25 @@ namespace YARL
 {
     class Program
     {
-	static Console console;
+	static Console parent;
+	static Console child;
 	static ContainerConsole container;
 	public const int Width = 100;
 	public const int Height = 40;
 	static YarlGame model;
-        static void Main(string[] args)
-        {
+	static void Main(string[] args)
+	{
+	    Log.Logger = new LoggerConfiguration()
+		.WriteTo.File("./logs/log-.txt", rollingInterval: RollingInterval.Day)
+		.CreateLogger();
+	    Log.Information("Log start");
+
 	    SadConsole.Game.Create(Width, Height);
 	    SadConsole.Game.OnInitialize = Init;
 	    SadConsole.Game.OnUpdate = Update;
 	    SadConsole.Game.Instance.Run();
 	    SadConsole.Game.Instance.Dispose();
-        }
+	}
 
 
 	private static void Update(GameTime game)
@@ -34,16 +40,16 @@ namespace YARL
 	    string result = sb.ToString();
 	    if (!(result is null || result == ""))
 	    {
-	    model.Update(sb.ToString());
-	    console = model.Draw();
-	    SadConsole.Global.CurrentScreen = console;
+		model.Update(sb.ToString());
+		parent = model.Draw();
 	    }
+	    SadConsole.Global.CurrentScreen = parent;
 	}
 
 	private static void Init()
 	{
-	    console = new Console(Width, Height);
-	    SadConsole.Global.CurrentScreen = console;
+	    parent = new Console(Width, Height);
+	    SadConsole.Global.CurrentScreen = parent;
 	    model = new YarlGame(Width, Height);
 	}
     }

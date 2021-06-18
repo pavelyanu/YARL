@@ -19,7 +19,7 @@ namespace YARL {
 	{
 	    Height = h;
 	    Width = w;
-	    mapGenerator = new MapGenerator(w, h, 7, 10, 5, 1);
+	    mapGenerator = new MapGenerator(w, h, 7, 30, 5, 1);
 	    current = mapGenerator.CreateMap();
 	    player = new Player(current.Rooms[0].Center);
 
