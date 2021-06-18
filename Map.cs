@@ -1,4 +1,5 @@
 using System;
+using Serilog;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace YARL
 	public int Height { get; set; }
 	public int Width { get; set; }
 
-	public Map(int h, int w)
+	public Map(int w, int h)
 	{
 	    Height = h;
 	    Width = w;
@@ -23,23 +24,23 @@ namespace YARL
 	{
 	    get { 
 		if (tiles.ContainsKey(key))
-		return tiles[key];
+		    return tiles[key];
 		else 
-		return null;
+		    return null;
 	    }
 	    set {
 		tiles[key] = value;
 	    }
 	}
-	
+
 	public Tile this[int x, int y]
 	{
 	    get { 
 		Vector2 key = new Vector2(x, y);
 		if (tiles.ContainsKey(key))
-		return tiles[key];
+		    return tiles[key];
 		else 
-		return null;
+		    return null;
 	    }
 
 	    set {
@@ -47,7 +48,7 @@ namespace YARL
 		tiles[key] = value;
 	    }
 	}
-	
+
 	public void SetCell(Tile tile)
 	{
 	    tiles[tile.position] = tile;
@@ -67,13 +68,19 @@ namespace YARL
 	}
 
 	public IEnumerable<Tile> GetLine(
-	    int xOrigin, int yOrigin, int xDestination, int yDestination
-	)
+		int xOrigin, int yOrigin, int xDestination, int yDestination
+		)
 	{
+	    Log.Information($"Getting line between: ");
+	    Log.Information($"{xOrigin}, {yOrigin} and {xDestination}, {yDestination}");
 	    xOrigin = ClampX( xOrigin );
 	    yOrigin = ClampY( yOrigin );
 	    xDestination = ClampX( xDestination );
 	    yDestination = ClampY( yDestination );
+	    Log.Information($"parameters of the console are:");
+	    Log.Information($"width: {Width}, height: {Height}");
+	    Log.Information($"Coordinates were corrected to:");
+	    Log.Information($"{xOrigin}, {yOrigin} and {xDestination}, {yDestination}");
 
 	    int dx = Math.Abs( xDestination - xOrigin );
 	    int dy = Math.Abs( yDestination - yOrigin );
@@ -85,12 +92,13 @@ namespace YARL
 	    {
 		if (tiles.ContainsKey(new Vector2(xOrigin, yOrigin)))
 		{
-		   yield return this[ xOrigin, yOrigin ];
+		    Log.Information($"point {xOrigin}, {yOrigin} is on this line");
+		    yield return this[ xOrigin, yOrigin ];
 		} else
 		{
-		    break;
+		    continue;
 		}
-		
+
 		if ( xOrigin == xDestination && yOrigin == yDestination )
 		{
 		    break;
@@ -109,15 +117,15 @@ namespace YARL
 	    }
 	}
 
-      private int ClampX( int x )
-      {
-         return ( x < 0 ) ? 0 : ( x > Width - 1 ) ? Width - 1 : x;
-      }
+	private int ClampX( int x )
+	{
+	    return ( x < 0 ) ? 0 : ( x > Width - 1 ) ? Width - 1 : x;
+	}
 
-      private int ClampY( int y )
-      {
-         return ( y < 0 ) ? 0 : ( y > Height - 1 ) ? Height - 1 : y;
-      }
+	private int ClampY( int y )
+	{
+	    return ( y < 0 ) ? 0 : ( y > Height - 1 ) ? Height - 1 : y;
+	}
 
     }
 }

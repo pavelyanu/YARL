@@ -137,9 +137,9 @@ namespace YARL
 
 
 	    List<Tile> borderTiles = _map.GetLine( xMin, yMin, xMax, yMin ).ToList();
-	    borderTiles.AddRange( _map.GetLine( xMin, yMin, xMin, yMax ) );
-	    borderTiles.AddRange( _map.GetLine( xMin, yMax, xMax, yMax ) );
-	    borderTiles.AddRange( _map.GetLine( xMax, yMin, xMax, yMax ) );
+	    borderTiles.AddRange( _map.GetLine( xMin, yMin, xMin, yMax ).ToList() );
+	    borderTiles.AddRange( _map.GetLine( xMin, yMax, xMax, yMax ).ToList() );
+	    borderTiles.AddRange( _map.GetLine( xMax, yMin, xMax, yMax ).ToList() );
 
 	    Log.Information("Going through border cells and checking if they are potential doors");
 

@@ -41,7 +41,7 @@ namespace YARL
 	    if (!(result is null || result == ""))
 	    {
 		model.Update(sb.ToString());
-		parent = model.Draw();
+		model.Draw();
 	    }
 	    SadConsole.Global.CurrentScreen = parent;
 	}
@@ -49,8 +49,14 @@ namespace YARL
 	private static void Init()
 	{
 	    parent = new Console(Width, Height);
+	    parent.Position = new Point(0, 0);
+	    child = new Console(5, 5);
+	    child.Fill(null, Color.Red, null);
+	    child.Parent = parent;
+	    parent.Components.Add(new MouseMoveComponent());
 	    SadConsole.Global.CurrentScreen = parent;
 	    model = new YarlGame(Width, Height);
+	    model.SetConsole(parent);
 	}
     }
 }

@@ -14,6 +14,7 @@ namespace YARL {
 	Player player;
 	protected int Height;
 	protected int Width;
+	SadConsole.Console console;
 
 	public YarlGame(int w, int h)
 	{
@@ -23,6 +24,11 @@ namespace YARL {
 	    current = mapGenerator.CreateMap();
 	    player = new Player(current.Rooms[0].Center);
 
+	}
+
+	public void  SetConsole(SadConsole.Console c)
+	{
+	    console = c; 
 	}
 
 	public void Update(String input)
@@ -38,9 +44,8 @@ namespace YARL {
 		Move(player, new Vector2(1, 0));
 	}
 
-	public SadConsole.Console Draw()
+	public void Draw()
 	{
-	    var console = new SadConsole.Console(Width, Height);
 	    for (int h = 0; h < Height; h++)
 	    {
 		for (int w = 0; w < Width; w++)
@@ -50,7 +55,6 @@ namespace YARL {
 		}
 	    }
 	    console.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());
-	    return console;
 	}
 
 	protected void Move(Entity entity, Vector2 direction)
