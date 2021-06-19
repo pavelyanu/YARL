@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog;
 
-namespace YARL
+namespace YARL.Topography
 {
     public class MapGenerator
     {
@@ -39,8 +39,8 @@ namespace YARL
 	    Log.Information("Started Map Creation");
 	    for ( int r = 0; r < _maxRooms; r++ )
 	    {
-		int roomWidth = random.Next( _roomMinSize, _roomMaxSize );
-		int roomHeight = random.Next( _roomMinSize, _roomMaxSize );
+		int roomWidth = random.Next( _roomMinSize * 2, _roomMaxSize );
+		int roomHeight = random.Next( _roomMinSize,(int) _roomMaxSize / 2 );
 		int roomXPosition = random.Next( 0, _width - roomWidth - 1 );
 		int roomYPosition = random.Next( 0, _height - roomHeight - 1 );
 

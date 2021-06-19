@@ -3,7 +3,7 @@ using Serilog;
 using System.Numerics;
 using System.Collections.Generic;
 
-namespace YARL
+namespace YARL.Topography
 {
     public class Map
     {

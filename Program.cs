@@ -4,6 +4,7 @@ using SadConsole;
 using Microsoft.Xna.Framework;
 using Console = SadConsole.Console;
 using System.Text;
+using YARL.Core;
 
 namespace YARL
 {
@@ -51,6 +52,7 @@ namespace YARL
 	    parent = new Console(Width, Height);
 	    parent.Position = new Point(0, 0);
 	    child = new Console(5, 5);
+	    child.Position = new Point(0, 0);
 	    child.Fill(null, Color.Red, null);
 	    child.Parent = parent;
 	    parent.Components.Add(new MouseMoveComponent());

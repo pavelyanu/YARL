@@ -1,12 +1,14 @@
 using System.Numerics;
 using System.Collections.Generic;
+using YARL.Drawing;
 
-namespace YARL
+namespace YARL.Topography
 {
     class TileFactory
 	{
 
 	    Dictionary<string, char> glyphs;
+	    IDrawingBehaviour drawingBehaviour;
 
 	    public TileFactory()
 	    {
@@ -14,11 +16,14 @@ namespace YARL
 		glyphs["floor"] = '.';
 		glyphs["wall"] = ' ';
 		glyphs["door"] = '+';
+		drawingBehaviour = new DefaultDraw();
 	    }
 
 	    public Tile Tile(Vector2 v, bool w, char g)
 	    {
-		    return new Tile(v, w, g);
+		    var tile = new Tile(v, w, g);
+		    tile.SetDrawingBehaviour(drawingBehaviour);
+		    return tile;
 	    }
 
 	    public Tile Wall(Vector2 v)

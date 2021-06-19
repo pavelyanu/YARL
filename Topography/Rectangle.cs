@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace YARL
+namespace YARL.Topography
 {
    public struct Rectangle : IEquatable<Rectangle>
    {

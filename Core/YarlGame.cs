@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Numerics;
 using Serilog;
 using SadConsole;
-using Microsoft.Xna.Framework;
-using Vector2 = System.Numerics.Vector2;
+using YARL.Topography;
+using YARL.Actors;
 
-namespace YARL {
+namespace YARL.Core {
     class YarlGame
     {
 	Map current;
@@ -20,7 +20,7 @@ namespace YARL {
 	{
 	    Height = h;
 	    Width = w;
-	    mapGenerator = new MapGenerator(w, h, 7, 30, 5, 1);
+	    mapGenerator = new MapGenerator(w, h, 9, 15, 5, 1);
 	    current = mapGenerator.CreateMap();
 	    player = new Player(current.Rooms[0].Center);
 
