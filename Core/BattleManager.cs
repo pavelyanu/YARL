@@ -67,7 +67,10 @@ namespace YARL.Core
 		    case '\n':
 			if (chosen_action is not null && GetEntityAt(cursor) is not null)
 			{
-			    targets.Add(GetEntityAt(cursor));
+			    if (GetEntityAt(cursor) is not Player)
+			    {
+				targets.Add(GetEntityAt(cursor));
+			    }
 			    if (targets.Count == chosen_action.numOfTargets)
 			    {
 				ProcessAction(player, chosen_action, targets);

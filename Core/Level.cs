@@ -24,7 +24,6 @@ namespace YARL.Core
 	Player player;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
 	public bool PlayerInCorridor { get => currentRoom.IsEmpty; }
-	List<Pickable> items;
 
 	public Level(int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level)
 	{

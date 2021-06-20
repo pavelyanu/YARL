@@ -21,7 +21,6 @@ namespace YARL.Core {
 	Level current;
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
-	MapGenerator mapGenerator;
 	Player player;
 	Console main;
 	Console side;

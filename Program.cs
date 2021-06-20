@@ -14,7 +14,6 @@ namespace YARL
 	static Console debug;
 	static Console bottom;
 	static Console side;
-	static ContainerConsole container;
 	public const int Width = 100;
 	public const int Height = 40;
 	public const int InvWidth = 30;
