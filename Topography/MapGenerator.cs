@@ -14,20 +14,18 @@ namespace YARL.Topography
 	private readonly int _maxRooms;
 	private readonly int _roomMaxSize;
 	private readonly int _roomMinSize;
-	private readonly int _level;
 	private readonly Map _map;
 	private Random random;
 	private StringBuilder sb;
 	private TileFactory tileFactory;
 
-	public MapGenerator( int width, int height, int maxRooms, int roomMaxSize, int roomMinSize, int level )
+	public MapGenerator( int width, int height, int maxRooms, int roomMaxSize, int roomMinSize )
 	{
 	    _width = width;
 	    _height = height;
 	    _maxRooms = maxRooms;
 	    _roomMaxSize = roomMaxSize;
 	    _roomMinSize = roomMinSize;
-	    _level = level;
 	    _map = new Map(width, height);
 	    random = new Random();
 	    sb = new StringBuilder();

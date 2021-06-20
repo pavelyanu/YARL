@@ -10,11 +10,15 @@ namespace YARL
 {
     class Program
     {
-	static Console parent;
-	static Console child;
+	static Console main;
+	static Console debug;
+	static Console bottom;
+	static Console side;
 	static ContainerConsole container;
 	public const int Width = 100;
 	public const int Height = 40;
+	public const int InvWidth = 30;
+	public const int BatHight = 5;
 	static YarlGame model;
 	static void Main(string[] args)
 	{
@@ -23,7 +27,7 @@ namespace YARL
 		.CreateLogger();
 	    Log.Information("Log start");
 
-	    SadConsole.Game.Create(Width, Height);
+	    SadConsole.Game.Create(Width + InvWidth, Height + BatHight);
 	    SadConsole.Game.OnInitialize = Init;
 	    SadConsole.Game.OnUpdate = Update;
 	    SadConsole.Game.Instance.Run();
@@ -33,32 +37,51 @@ namespace YARL
 
 	private static void Update(GameTime game)
 	{
-	    var keys = SadConsole.Global.KeyboardState.KeysPressed; 
-	    var sb = new StringBuilder();
-	    foreach(var key in keys) {
-		sb.Append(key.Character);
-	    }
-	    string result = sb.ToString();
-	    if (!(result is null || result == ""))
+	    if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))
 	    {
-		model.Update(sb.ToString());
-		model.Draw();
+		Log.Information($"Enter has been pressed");
+		model.Update('\n'.ToString());
+	    } else if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+	    {
+		Log.Information($"Escape has been pressed");
+		model.Update('\r'.ToString());
+	    } else {
+		var keys = SadConsole.Global.KeyboardState.KeysPressed; 
+		
+		var sb = new StringBuilder();
+		foreach(var key in keys) {
+		    sb.Append(key.Character);
+		}
+		string result = sb.ToString();
+		if (!(result is null || result == ""))
+		{
+		    Log.Information($"{result} has been pressed");
+		    model.Update(sb.ToString());
+		}
 	    }
-	    SadConsole.Global.CurrentScreen = parent;
+	    model.Draw();
+	    SadConsole.Global.CurrentScreen = main;
 	}
 
 	private static void Init()
 	{
-	    parent = new Console(Width, Height);
-	    parent.Position = new Point(0, 0);
-	    child = new Console(5, 5);
-	    child.Position = new Point(0, 0);
-	    child.Fill(null, Color.Red, null);
-	    child.Parent = parent;
-	    parent.Components.Add(new MouseMoveComponent());
-	    SadConsole.Global.CurrentScreen = parent;
+	    main = new Console(Width, Height);
+	    main.Position = new Point(0, 0);
+	    debug = new Console(5, 5);
+	    debug.Position = new Point(0, 0);
+	    debug.Fill(null, Color.Red, null);
+	    debug.Parent = main;
+	    main.Components.Add(new MouseMoveComponent());
+	    bottom = new Console(InvWidth, Height);
+	    bottom.Position = new Point(Width, 0);
+	    bottom.Parent = main;
+	    side = new Console(Width, BatHight);
+	    side.Position = new Point(0, Height);
+	    side.Fill(null, Color.Blue, null);
+	    side.Parent = main;
+	    SadConsole.Global.CurrentScreen = main;
 	    model = new YarlGame(Width, Height);
-	    model.SetConsole(parent);
+	    model.SetConsoles(main, side, bottom);
 	}
     }
 }

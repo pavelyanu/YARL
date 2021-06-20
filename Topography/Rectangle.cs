@@ -14,8 +14,6 @@ namespace YARL.Topography
       public int Y { get; set; }
 
 
-      #region Constructors
-
       public Rectangle( int x, int y, int width, int height )
          : this()
       {
@@ -33,8 +31,6 @@ namespace YARL.Topography
          Width = (int) size.X;
          Height = (int) size.Y;
       }
-
-      #endregion
 
       public static Rectangle Empty { get; } = new Rectangle();
 

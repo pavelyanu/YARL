@@ -127,5 +127,18 @@ namespace YARL.Topography
 	    return ( y < 0 ) ? 0 : ( y > Height - 1 ) ? Height - 1 : y;
 	}
 
+	public Rectangle GetRoom( Vector2 position)
+	{
+	    foreach(var room in Rooms)
+	    {
+		if (room.Contains(position))
+		{
+		    return room;
+		}
+	    }
+	    
+	    return new Rectangle();
+	}
+
     }
 }
