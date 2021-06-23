@@ -202,7 +202,15 @@ namespace YARL.Topography
 		for (int y = 0; y < _height; y++) {
 		    if (map[x, y] is null)
 		    {
-			map.SetCell(tileFactory.Wall(x, y));
+			if (map[x, y + 1] is not null && map[x, y + 1].walkable ||
+			    map[x, y - 1] is not null && map[x, y - 1].walkable ||
+			    map[x + 1, y + 1] is not null && map[x + 1, y + 1].walkable ||
+			    map[x - 1, y + 1] is not null && map[x - 1, y + 1].walkable ||
+			    map[x + 1, y - 1] is not null && map[x + 1, y - 1].walkable ||
+			    map[x - 1, y - 1] is not null && map[x - 1, y - 1].walkable ||
+			    map[x + 1, y] is not null && map[x + 1, y].walkable ||
+			    map[x - 1, y] is not null && map[x - 1, y].walkable)
+			    map.SetCell(tileFactory.Wall(x, y));
 		    }
 		}
 	    }

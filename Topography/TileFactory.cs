@@ -8,21 +8,21 @@ namespace YARL.Topography
 	{
 
 	    Dictionary<string, char> glyphs;
-	    IDrawingBehaviour drawingBehaviour;
+	    IDrawBehaviour drawBehaviour;
 
 	    public TileFactory()
 	    {
 		glyphs = new Dictionary<string, char>();
 		glyphs["floor"] = '.';
-		glyphs["wall"] = ' ';
+		glyphs["wall"] = '#';
 		glyphs["door"] = '+';
-		drawingBehaviour = new DefaultDraw();
+		drawBehaviour = new DefaultDraw();
 	    }
 
 	    public Tile Tile(Vector2 v, bool w, char g)
 	    {
 		    var tile = new Tile(v, w, g);
-		    tile.SetDrawingBehaviour(drawingBehaviour);
+		    tile.drawBehaviour = drawBehaviour;
 		    return tile;
 	    }
 
