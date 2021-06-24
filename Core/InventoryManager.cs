@@ -1,49 +1,86 @@
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using YARL.Items;
 using YARL.Actors;
 
 namespace YARL.Core
 {
+    public enum State
+    {
+	SelectingEquipment,
+	SelectingUsables,
+	Overview
+    }
+
     class InventoryManager
     {
-	Player player;
+	Inventory inventory;
 	StringBuilder sb; 
-	Equipable hand;
+	Dictionary<char, Item> chooseMap;
+	State state;	
 
 	public InventoryManager(Player p)
 	{
-	    player = p;
+	    inventory = p.inventory;
 	    sb = new StringBuilder();
-	    hand = null;
+	    state = State.Overview;
+	    chooseMap = null;
+	}
+
+	public void ProcessInput(char key)
+	{
+	    if (state == State.Overview)
+	    {
+		switch (key)
+		{
+		    case 'e':
+			chooseMap = GetChooseMap(inventory.GetEquipable());
+			state = State.SelectingEquipment;
+			break;
+		}
+	    } else if (state == State.SelectingEquipment)
+	    {
+		if (chooseMap.ContainsKey(key))
+		{
+		    inventory.EquipItem(chooseMap[key]);	    
+		    state = State.Overview;
+		}
+	    }
+	}
+
+	Dictionary<char, Item> GetChooseMap(List<Item> items)
+	{
+	    Dictionary<char, Item> result = new Dictionary<char, Item>();
+	    for (int i = 97; i < 123; i++)
+	    {
+		result[(char) i] = items[0];
+		items.RemoveAt(0);
+		if (items.Count == 0)
+		    break;
+	    }
+	    return result;
 	}
 
 	public string Draw()
 	{
 	    sb.Clear();
-	    if (hand is not null)
-		sb.AppendLine($"{hand.name} is in the hand");
-	    foreach(var item in player.possessions.Keys)
+	    switch (state)
 	    {
-		sb.Append(item);
-		int count = player.possessions[item].Count;
-		if (count > 1)
-		    sb.Append($" {count}");
-		sb.AppendLine();
-	    }
-	    return sb.ToString();
-	}
-
-	public void Equip()
-	{
-	    if (player.possessions.Count != 0)
-	    {
-		player.possessions.Values.ToList()[0][0].Equip(player);
-		hand = player.possessions.Values.ToList()[0][0];
-		player.possessions.Remove(hand.name);
+		case State.Overview:
+		    foreach(var item in inventory.items.Keys)
+		    {
+			sb.AppendLine(item);
+		    }
+		    return sb.ToString();
+		case State.SelectingEquipment:
+		    foreach(var item in chooseMap)
+		    {
+			sb.AppendLine($"{item.Key} - {item.Value}");
+		    }
+		    return sb.ToString();
+		default:
+		    return "Error";
 	    }
 	}
-
     }
 }

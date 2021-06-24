@@ -5,26 +5,25 @@ namespace YARL.Items
 {
     public interface IPickBehaviour
     {
-	public void Pick(Player player, Pickable self);
+	public void Pick(Player player, Item item);
     }
 
     public interface IEquipBehaviour
     {
-	public void Equip(Player player, Equipable self);
-	public void UnEquip(Player player, Equipable self);
+	public void Equip(Player player);
+	public void UnEquip(Player player);
     }
 
-    public class PossessablePickBehaviour : IPickBehaviour
+    public interface IUseBehaviour
     {
-	Equipable possession;
-	public PossessablePickBehaviour(Equipable item)
+	public void Use(Player player);
+    }
+
+    public class AddItemBehaviour : IPickBehaviour
+    {
+	public void Pick(Player player, Item item)
 	{
-	    possession = item;
-	}
-	
-	public void Pick(Player player, Pickable pickable)
-	{
-	    player.AddPossession(possession);
+	    player.inventory.Add(item);
 	}
     }
 
@@ -36,14 +35,37 @@ namespace YARL.Items
 	    action = a;
 	}
 
-	public void Equip(Player player, Equipable self)
+	public void Equip(Player player)
 	{
 	    player.AddAction(action);
 	}
 
-	public void UnEquip(Player player, Equipable self)
+	public void UnEquip(Player player)
 	{
 	    player.RemoveAction(action);
+	}
+    }
+
+    public class DoNothing : IPickBehaviour, IEquipBehaviour, IUseBehaviour
+    {
+	public void Pick(Player player, Item item)
+	{
+
+	}
+
+	public void Equip(Player player)
+	{
+
+	}
+
+	public void UnEquip(Player player)
+	{
+
+	}
+
+	public void Use(Player player)
+	{
+
 	}
     }
 

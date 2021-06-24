@@ -8,7 +8,7 @@ namespace YARL.Actors
     public abstract class Entity: IDrawable
     {
 	public abstract char glyph { get; }
-	public IDrawingBehaviour drawingBehaviour { get; protected set; }
+	public IDrawBehaviour drawBehaviour { get; set; }
 
 	public int health { get; protected set; }
 	public abstract int movement { get; }
@@ -42,14 +42,7 @@ namespace YARL.Actors
 
 	public char Draw()
 	{
-	    return drawingBehaviour.Draw(glyph);
+	    return drawBehaviour.Draw(glyph);
 	}
-
-	public void SetDrawingBehaviour(IDrawingBehaviour b)
-	{
-	    drawingBehaviour = b;
-	}
-
-
     }
 }

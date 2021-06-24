@@ -22,6 +22,7 @@ namespace YARL.Core {
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
 	Player player;
+	ItemFactory itemFactory;
 	Console main;
 	Console side;
 	Console bottom;
@@ -32,16 +33,15 @@ namespace YARL.Core {
 	    Width = w;
 	    current = new Level(w, h, 9, 15, 5, 1);
 	    player = new Player(current.Rooms[0].Center);
-	    player.SetDrawingBehaviour(new DefaultDraw());
+	    player.drawBehaviour = new DefaultDraw();
+	    itemFactory = new ItemFactory();
 	    current.AddPlayer(player);
 	    inventoryManager = new InventoryManager(player);
 	    Monster monster = new Monster(current.Rooms[1].Center);
-	    monster.SetDrawingBehaviour(new DefaultDraw());
+	    monster.drawBehaviour = new DefaultDraw();
 	    current.AddEntity(monster);
-	    var sword = new ShortSwordPick(player.position + new Vector2(0, 1));
-	    sword.SetBehaviour(new PossessablePickBehaviour(new ShortSwordPossession()));
-	    sword.SetDrawingBehaviour(new DefaultDraw());
-	    current.AddItem(sword);
+	    Item sword = itemFactory.CreateShortSword();
+	    current.PutItem(sword, player.position + new Vector2(0, 1));
 	}
 
 	public void  SetConsoles(
@@ -67,7 +67,9 @@ namespace YARL.Core {
 		else if(input[0] == 'l')
 		    current.Move(player, new Vector2(1, 0));
 		else if(input[0] == 'e')
-			inventoryManager.Equip();
+		    inventoryManager.ProcessInput('e');
+		else if(input[0] == 'a')
+		    inventoryManager.ProcessInput('a');
 		else if(input[0] == ',')
 		{
 		    current.PlayerPickItem();

@@ -166,9 +166,9 @@ namespace YARL.Core
 	    return result;
 	}
 
-	public void AddItem(Pickable item)
+	public void PutItem(Item item, Vector2 position)
 	{
-	    map[item.position].items.Add(item);
+	    map[position].items.Add(item);
 	}
 
 	public List<Tile> GetLine(Vector2 origin, Vector2 destination)

@@ -7,49 +7,60 @@ using YARL.Drawing;
 
 namespace YARL.Items
 {
-    public abstract class Pickable : IDrawable
-    {
-	public abstract char glyph { get; }
-	public IDrawingBehaviour drawingBehaviour { get; protected set; }
 
-	public Vector2 position { get; protected set; }
-	public abstract string name { get; }
-	public IPickBehaviour pickBehaviour { get; protected set; }	
+    public enum EquipmentType
+    {
+	Hands,
+	Body,
+	None
+    }
+
+    public enum PossessionType
+    {
+	Weapon,
+	Armor,
+	Book
+    }
+
+    public class Item : IDrawable
+    {
+	public IDrawBehaviour drawBehaviour { get; set; }
+	public char glyph { get; set; }
+	public string name { get; set; }
+	public bool equipable { get; set; }
+	public bool usable { get; set; }
+	public int amount { get; set; }
+	public PossessionType possessionType { get; set; }
+	public EquipmentType equipmentType { get; set; }
+	public IPickBehaviour pickBehaviour { get; set; }
+	public IEquipBehaviour equipBehaviour { get; set; }
+	public IUseBehaviour useBehaviour { get; set; }
+
+	public char Draw()
+	{
+	    return drawBehaviour.Draw(glyph);
+	}
 
 	public void Pick(Player player)
 	{
 	    pickBehaviour.Pick(player, this);
 	}
 
-	public void SetBehaviour(IPickBehaviour b)
-	{
-	    pickBehaviour = b;
-	}
-
-	public char Draw()
-	{
-	    return drawingBehaviour.Draw(glyph);
-	}
-
-	public void SetDrawingBehaviour(IDrawingBehaviour b)
-	{
-	    drawingBehaviour = b;
-	}
-    }
-
-    public abstract class Equipable
-    {
-	public bool equipped { get; protected set; }
-	public abstract string name { get; }
-	public Entity possessedBy { get; }
-	public IEquipBehaviour behaviour { get; set; }
 	public void Equip(Player player)
 	{
-	    behaviour.Equip(player, this);
+	    equipBehaviour.Equip(player);
 	}
+
 	public void UnEquip(Player player)
 	{
-	    behaviour.UnEquip(player, this);
+	    equipBehaviour.UnEquip(player);
 	}
+
+	public void Use(Player player)
+	{
+	    useBehaviour.Use(player);
+	}
+
+	
     }
 }

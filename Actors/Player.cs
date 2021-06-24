@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using YARL.Actions;
+using YARL.Core;
 using YARL.Items;
 
 namespace YARL.Actors
@@ -12,31 +13,14 @@ namespace YARL.Actors
 	public int ac_modifier { get; protected set; }
 	public override char glyph { get => '@';}
 	public int gold { get; protected set; }
-	public Dictionary<string, List<Equipable>> possessions;
+	public Inventory inventory;
 	
 	public Player(Vector2 vector)
 	{
 	    health = 10;
 	    position = vector;
-	    possessions = new Dictionary<string, List<Equipable>>();
 	    actions = new Dictionary<string, Action>();
-	}
-
-	public void AddPossession(Equipable possession)
-	{
-	    if (!possessions.ContainsKey(possession.name))
-		possessions[possession.name] = new List<Equipable>();
-
-	    possessions[possession.name].Add(possession);
-	}
-
-	public void RemovePossession(Equipable possession)
-	{
-	    if (possessions.ContainsKey(possession.name))
-		possessions[possession.name].RemoveAt(0);
-
-	    if (possessions[possession.name].Count == 0)
-		possessions.Remove(possession.name);
+	    inventory = new Inventory(this);
 	}
 
 	public int CalculateAC()
