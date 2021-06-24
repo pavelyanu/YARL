@@ -10,12 +10,12 @@ namespace YARL.Topography
 	public Vector2 position { get; protected set; } 
 	public bool walkable { get; protected set; }
 	public char glyph { get; protected set; }
-	public List<Pickable> items;
-	public IDrawingBehaviour drawingBehaviour  { get; protected set; }	
+	public List<Item> items;
+	public IDrawBehaviour drawBehaviour  { get; set; }	
 
 	public Tile(Vector2 v, bool w, char g)
 	{
-	    items = new List<Pickable>();
+	    items = new List<Item>();
 	    position = v;
 	    walkable = w;
 	    glyph = g;
@@ -24,26 +24,21 @@ namespace YARL.Topography
 	public char Draw()
 	{
 	    if (items.Count == 0)
-		return drawingBehaviour.Draw(glyph);
+		return drawBehaviour.Draw(glyph);
 	    else if(items.Count == 1)
 		return items[0].Draw();
 	    else 
-		return drawingBehaviour.Draw('*');
+		return drawBehaviour.Draw('*');
 	}
 
-	public void SetDrawingBehaviour(IDrawingBehaviour b)
-	{
-	    drawingBehaviour = b;
-	}
-
-	public void PutItem(Pickable item)
+	public void PutItem(Item item)
 	{
 	    items.Add(item);	
 	}
 
-	public void RemoveItem(Pickable item)
+	public void RemoveItem(Item item)
 	{
-		items.Remove(item);
+	    items.Remove(item);
 	}
     }
 }

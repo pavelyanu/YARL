@@ -55,5 +55,15 @@ namespace YARL.Topography
 	    {
 		return Tile(new Vector2(x, y), true, glyphs["door"]); 
 	    }
+
+	    public Tile Empty(Vector2 v)
+	    {
+		return Tile(v, false, ' ');
+	    }
+
+	    public Tile Empty(int x, int y)
+	    {
+		return Tile(new Vector2(x, y), false, ' ');
+	    }
 	}
 }

@@ -211,6 +211,8 @@ namespace YARL.Topography
 			    map[x + 1, y] is not null && map[x + 1, y].walkable ||
 			    map[x - 1, y] is not null && map[x - 1, y].walkable)
 			    map.SetCell(tileFactory.Wall(x, y));
+			else
+			    map.SetCell(tileFactory.Empty(x, y));
 		    }
 		}
 	    }
