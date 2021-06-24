@@ -1,6 +1,6 @@
 namespace YARL.Drawing
 {
-    class DefaultDraw: IDrawingBehaviour
+    class DefaultDraw: IDrawBehaviour
     {
 	public char Draw(char c)
 	{

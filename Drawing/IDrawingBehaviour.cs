@@ -1,6 +1,6 @@
 namespace YARL.Drawing
 {
-    public interface IDrawingBehaviour
+    public interface IDrawBehaviour
     {
 	public char Draw(char c);
     }
