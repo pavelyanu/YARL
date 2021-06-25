@@ -29,9 +29,9 @@ namespace YARL.Core
                 if (!item.equipable)
                     throw new ArgumentException($"{item.name} is not equipable");
                 equipment[item.equipmentType] = item;
-                if (items[item.name].amount-- == 0)
-                    Remove(item);
+                Remove(item);
                 item.Equip(player);
+		equipment[item.equipmentType] = item;
             }
         }
 
@@ -62,7 +62,7 @@ namespace YARL.Core
 	    if (items.ContainsKey(item.name))
 	    {
 		items[item.name].amount--;
-		if (items[item.name].amount == 0)
+		if (items[item.name].amount <= 0)
 		{
 		    items.Remove(item.name);
 		}
@@ -99,6 +99,17 @@ namespace YARL.Core
             }
             return result;
         }
+
+	public List<Item> GetEquipped()
+	{
+	    var result = new List<Item>();
+            foreach (var item in equipment.Values)
+            {
+                if (item.equipable)
+                    result.Add(item);
+            }
+            return result;
+	}
 
         public List<Item> GetUsable()
         {

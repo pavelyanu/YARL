@@ -35,8 +35,11 @@ namespace YARL.Core
 		{
 		    case 'e':
 			chooseMap = GetChooseMap(inventory.GetEquipable());
-			state = State.SelectingEquipment;
-			break;
+			if (chooseMap is not null)
+			{
+			    state = State.SelectingEquipment;
+			    break;
+			} else break;
 		}
 	    } else if (state == State.SelectingEquipment)
 	    {
@@ -50,6 +53,8 @@ namespace YARL.Core
 
 	Dictionary<char, Item> GetChooseMap(List<Item> items)
 	{
+	    if (items.Count == 0)
+		return null;
 	    Dictionary<char, Item> result = new Dictionary<char, Item>();
 	    for (int i = 97; i < 123; i++)
 	    {
@@ -67,6 +72,10 @@ namespace YARL.Core
 	    switch (state)
 	    {
 		case State.Overview:
+		    foreach(var item in inventory.GetEquipped())
+		    {
+			sb.AppendLine($"You have {item.name} equipped");
+		    }
 		    foreach(var item in inventory.items.Keys)
 		    {
 			sb.AppendLine(item);
