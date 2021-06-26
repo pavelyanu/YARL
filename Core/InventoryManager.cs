@@ -1,5 +1,6 @@
 using System.Text;
 using System.Collections.Generic;
+using Serilog;
 using YARL.Items;
 using YARL.Actors;
 
@@ -8,6 +9,7 @@ namespace YARL.Core
     public enum State
     {
 	SelectingEquipment,
+	SelectingEquipped,
 	SelectingUsables,
 	Overview
     }
@@ -38,14 +40,29 @@ namespace YARL.Core
 			if (chooseMap is not null)
 			{
 			    state = State.SelectingEquipment;
-			    break;
-			} else break;
+			}
+			break;
+		    case 'r':
+			chooseMap = GetChooseMap(inventory.GetEquipped());
+			if (chooseMap is not null)
+			{
+			    state = State.SelectingEquipped;
+			    Log.Information("Choosemap is not null");
+			} else Log.Information("Choosemap is null");
+			break;
 		}
 	    } else if (state == State.SelectingEquipment)
 	    {
 		if (chooseMap.ContainsKey(key))
 		{
-		    inventory.EquipItem(chooseMap[key]);	    
+		    inventory.Equip(chooseMap[key]);	    
+		    state = State.Overview;
+		}
+	    } else if (state == State.SelectingEquipped)
+	    {
+		if (chooseMap.ContainsKey(key))
+		{
+		    inventory.UnEquip(chooseMap[key].equipmentType);
 		    state = State.Overview;
 		}
 	    }
@@ -82,9 +99,10 @@ namespace YARL.Core
 		    }
 		    return sb.ToString();
 		case State.SelectingEquipment:
+		case State.SelectingEquipped:
 		    foreach(var item in chooseMap)
 		    {
-			sb.AppendLine($"{item.Key} - {item.Value}");
+			sb.AppendLine($"{item.Key} - {item.Value.name}");
 		    }
 		    return sb.ToString();
 		default:

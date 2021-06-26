@@ -20,7 +20,7 @@ namespace YARL.Core
             player = p;
         }
 
-        public void EquipItem(Item item)
+        public void Equip(Item item)
         {
             if (!items.ContainsKey(item.name))
                 throw new ArgumentException($"{item.name} is not in the inventory");
@@ -105,8 +105,7 @@ namespace YARL.Core
 	    var result = new List<Item>();
             foreach (var item in equipment.Values)
             {
-                if (item.equipable)
-                    result.Add(item);
+                result.Add(item);
             }
             return result;
 	}

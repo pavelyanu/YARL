@@ -68,6 +68,8 @@ namespace YARL.Core {
 		    current.Move(player, new Vector2(1, 0));
 		else if(input[0] == 'e')
 		    inventoryManager.ProcessInput('e');
+		else if(input[0] == 'r')
+		    inventoryManager.ProcessInput('r');
 		else if(input[0] == 'a')
 		    inventoryManager.ProcessInput('a');
 		else if(input[0] == ',')
