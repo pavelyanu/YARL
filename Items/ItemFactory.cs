@@ -42,6 +42,16 @@ namespace YARL.Items
 
 	public Item CreateShortSword()
 	{
+	    var attack = new Attack();
+	    attack.cost = 1;
+	    attack.numOfTargets = 1;
+	    attack.name = "Shor sword attack";
+	    attack.range = 1;
+	    attack.attackModifier = 1;
+	    attack.damageModifier = 1;
+	    attack.dice = 6;
+	    attack.numberOfDice = 1;
+	    
 	    return Create(
 		drawBehaviour: drawBehaviour,
 		glyph: '-',
@@ -52,7 +62,7 @@ namespace YARL.Items
 		possessionType: PossessionType.Weapon,
 		equipmentType: EquipmentType.Hands,
 		pickBehaviour: new AddItemBehaviour(),
-		equipBehaviour: new AddActionBehaviour(new ShortSwordAttack()),
+		equipBehaviour: new AddActionBehaviour(attack),
 		useBehaviour: new DoNothing()
 	    );
 

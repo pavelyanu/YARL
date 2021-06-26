@@ -8,6 +8,7 @@ namespace YARL.Core
 
 	public static int Roll(int dice, int n)
 	{
+	    random = new Random();
 	    int result = 0;
 	    for (int i = 0; i < n; i++)
 	    {

@@ -1,0 +1,27 @@
+using System.Text;
+using System.Collections.Generic;
+using YARL.Actors;
+
+namespace YARL.Actions
+{
+    class ShortSwordAttack : Action
+    {
+	public override int cost { get => 1; }
+	public override int numOfTargets { get => 1; }
+	public override string name { get => "Short sword attack"; }
+	public override int range { get => 1; }
+	
+	StringBuilder sb;
+
+	int attackModifier { get; set; }
+	int damageModifier { get; set; }
+
+	public override string Do(List<Entity> targets)
+	{
+	    foreach (var target in targets)
+	    {
+		target.Inflict(5);
+	    }
+	}
+    }
+}

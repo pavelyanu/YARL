@@ -6,11 +6,11 @@ namespace YARL.Actions
 {
     public abstract class Action : IEquatable<Action>
     {
-	public abstract int cost { get; }
-	public abstract int numOfTargets { get; }
-	public abstract string name { get; }
-	public abstract int range { get; }
-	public abstract void Do(List<Entity> targets);
+	public abstract int cost { get; set; }
+	public abstract int numOfTargets { get; set; }
+	public abstract string name { get; set; }
+	public abstract int range { get; set; }
+	public abstract string Do(List<Entity> targets);
 
 	public override bool Equals(object obj)
 	{

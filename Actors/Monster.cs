@@ -10,6 +10,7 @@ namespace YARL.Actors
 	public override int movement { get => 30; }
 	public override int armor_class { get => 10; }
 	public override char glyph { get => 'g';}
+	public override string name { get => "monster"; }
 	
 	public Monster(Vector2 vector)
 	{

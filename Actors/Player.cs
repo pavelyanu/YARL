@@ -10,8 +10,9 @@ namespace YARL.Actors
     {
 	public override int movement { get => 5; }
 	public override int armor_class { get => CalculateAC(); }
-	public int ac_modifier { get; protected set; }
 	public override char glyph { get => '@';}
+	public override string name { get => "self"; }
+	public int ac_modifier { get; protected set; }
 	public int gold { get; protected set; }
 	public Inventory inventory;
 	

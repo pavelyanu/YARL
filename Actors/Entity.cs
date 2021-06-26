@@ -13,6 +13,7 @@ namespace YARL.Actors
 	public int health { get; protected set; }
 	public abstract int movement { get; }
 	public abstract int armor_class { get; }
+	public abstract string name { get; }
 	public Vector2 position { get; protected set; }	
 	public Dictionary<string, Action> actions { get; protected set; }
 	public bool alive { get => health > 0; }
