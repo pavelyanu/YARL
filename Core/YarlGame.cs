@@ -93,6 +93,7 @@ namespace YARL.Core {
 	    main.Clear();	
 	    side.Clear();
 	    bottom.Clear();
+	    current.UpdateView();
 	    for (int h = 0; h < Height; h++)
 	    {
 		for (int w = 0; w < Width; w++)

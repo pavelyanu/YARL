@@ -23,7 +23,7 @@ namespace YARL.Core
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
 	Player player;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
-	public bool PlayerInCorridor { get => currentRoom.IsEmpty; }
+	public bool playerInCorridor { get => currentRoom.IsEmpty; }
 
 	public Level(int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level)
 	{
@@ -54,6 +54,33 @@ namespace YARL.Core
 		return map[x, y];
 	    }
 	}
+
+	public void UpdateView()
+	{
+	    if (!playerInCorridor)
+	    {
+		var tiles = map.GetTilesInsideRoom(currentRoom);
+		foreach (var tile in tiles)
+		{
+		    tile.visible = true;
+		}
+	    } else 
+	    {
+		var vectors = new List<Vector2>();
+		vectors.Add(new Vector2(-1, -1));
+		vectors.Add(new Vector2(0, -1));
+		vectors.Add(new Vector2(1, -1));
+		vectors.Add(new Vector2(1, 0));
+		vectors.Add(new Vector2(1, 1));
+		vectors.Add(new Vector2(0, 1));
+		vectors.Add(new Vector2(-1, 1));
+		vectors.Add(new Vector2(-1, 0));
+		foreach (var vector in vectors)
+		{
+		    this[player.position + vector].visible = true;
+		}
+	    }
+	}
 	
 	public void AddPlayer(Player p)
 	{
@@ -68,14 +95,14 @@ namespace YARL.Core
 	    var result = player.position + dir;
 	    if (map[result].walkable)
 	    {
-		if (!PlayerInCorridor)
+		if (!playerInCorridor)
 		{
 		    roomPopulation[currentRoom].Remove(player);
 		}
 
 		player.Move(dir);
 
-		if (!PlayerInCorridor)
+		if (!playerInCorridor)
 		{
 		    AddToRoom(currentRoom, player);
 		}
@@ -87,7 +114,7 @@ namespace YARL.Core
 
 	public bool PlayerInRoomWithMonster()
 	{
-	    if (!PlayerInCorridor)
+	    if (!playerInCorridor)
 	    {
 		if (roomPopulation[currentRoom].Count > 1)
 		{

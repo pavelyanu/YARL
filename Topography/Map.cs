@@ -140,5 +140,21 @@ namespace YARL.Topography
 	    return new Rectangle();
 	}
 
+	public List<Tile> GetTilesInsideRoom(Rectangle room)
+	{
+	    var result = new List<Tile>();
+	    if (Rooms.Contains(room))
+	    {
+		for (int x = room.Left; x <= room.Right; x++)
+		{
+		    for (int y = room.Top; y <= room.Bottom; y++)
+		    {
+			result.Add(this[x, y]);
+		    }
+		}
+	    }
+	    return result;
+	}
+
     }
 }
