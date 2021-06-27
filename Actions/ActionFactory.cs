@@ -1,5 +1,3 @@
-using YARL.Actors;
-
 namespace YARL.Actions
 {
     class ActionFactory

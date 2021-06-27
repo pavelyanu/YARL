@@ -17,12 +17,13 @@ namespace YARL.Core {
     {
 	protected int Height;
 	protected int Width;
-	bool inBattle { get => current.PlayerInRoomWithMonster(); }
-	Level current;
+	bool inBattle { get => level.PlayerInRoomWithMonster(); }
+	Level level;
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
 	Player player;
 	ItemFactory itemFactory;
+	EntityFactory entityFactory;
 	Console main;
 	Console side;
 	Console bottom;
@@ -31,17 +32,16 @@ namespace YARL.Core {
 	{
 	    Height = h;
 	    Width = w;
-	    current = new Level(w, h, 9, 15, 5, 1);
-	    player = new Player(current.Rooms[0].Center);
-	    player.drawBehaviour = new DefaultDraw();
-	    itemFactory = new ItemFactory();
-	    current.AddPlayer(player);
+	    itemFactory = new ItemFactory(new DefaultDraw());
+	    entityFactory = new EntityFactory(new DefaultDraw());
+	    level = new Level(w, h, 9, 15, 5, 1);
+	    player = entityFactory.CreatePlayer();
+	    player.position = level.Rooms[0].Center;
 	    inventoryManager = new InventoryManager(player);
-	    Monster monster = new Monster(current.Rooms[1].Center);
-	    monster.drawBehaviour = new DefaultDraw();
-	    current.AddEntity(monster);
+	    level.AddPlayer(player);
+	    level.AddEntity(entityFactory.CreateGoblin());
 	    Item sword = itemFactory.CreateShortSword();
-	    current.PutItem(sword, player.position + new Vector2(0, 1));
+	    level.PutItem(sword, player.position + new Vector2(0, 1));
 	}
 
 	public void  SetConsoles(
@@ -59,27 +59,23 @@ namespace YARL.Core {
 	    {
 		Log.Information("Player is not in battle");		
 		if (input[0] == 'k')
-		    current.Move(player, new Vector2(0, -1));
+		    level.Move(player, new Vector2(0, -1));
 		else if(input[0] == 'h')
-		    current.Move(player, new Vector2(-1, 0));
+		    level.Move(player, new Vector2(-1, 0));
 		else if(input[0] == 'j')
-		    current.Move(player, new Vector2(0, 1));
+		    level.Move(player, new Vector2(0, 1));
 		else if(input[0] == 'l')
-		    current.Move(player, new Vector2(1, 0));
-		else if(input[0] == 'e')
-		    inventoryManager.ProcessInput('e');
-		else if(input[0] == 'r')
-		    inventoryManager.ProcessInput('r');
-		else if(input[0] == 'a')
-		    inventoryManager.ProcessInput('a');
+		    level.Move(player, new Vector2(1, 0));
+		else if("era".Contains(input[0]))
+		    inventoryManager.ProcessInput(input[0]);
 		else if(input[0] == ',')
 		{
-		    current.PlayerPickItem();
+		    level.PlayerPickItem();
 		}
 		if (inBattle)
 		{
 		    Log.Information("Player has entered the room with monsters");
-		    battleManager = new BattleManager(current, player);
+		    battleManager = new BattleManager(level, player);
 		}
 	    } else 
 	    {
@@ -93,13 +89,13 @@ namespace YARL.Core {
 	    main.Clear();	
 	    side.Clear();
 	    bottom.Clear();
-	    current.UpdateView();
+	    level.UpdateView();
 	    for (int h = 0; h < Height; h++)
 	    {
 		for (int w = 0; w < Width; w++)
 		{
 		    var vector = new Vector2(w, h);
-		    main.Print(w, h, current[vector].Draw().ToString());
+		    main.Print(w, h, level[vector].Draw().ToString());
 		}
 	    }
 	    main.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());

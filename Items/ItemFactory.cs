@@ -8,9 +8,9 @@ namespace YARL.Items
 	public IDrawBehaviour drawBehaviour { get; set; }
 	ActionFactory actionFactory;
 
-	public ItemFactory()
+	public ItemFactory(IDrawBehaviour _drawBehaviour)
 	{
-	    drawBehaviour = new DefaultDraw();
+	    drawBehaviour = _drawBehaviour;
 	    actionFactory = new ActionFactory();
 	}
 

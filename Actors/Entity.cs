@@ -7,18 +7,43 @@ namespace YARL.Actors
 {
     public abstract class Entity: IDrawable
     {
-	public abstract char glyph { get; }
+	public char glyph { get; set; }
 	public IDrawBehaviour drawBehaviour { get; set; }
 
-	public abstract int movement { get; }
-	public abstract int armor_class { get; }
-	public abstract string name { get; }
+	public int movement { get; protected set; }
+	public int armor_class { get => 10 + dex + ac_modifier; }
+	public int ac_modifier { get; protected set; }
+	public string name { get; protected set; }
 	public int str { get; protected set; }
+	public int dex { get; protected set; }
+	public int inte { get; protected set; }
 	public int health { get; protected set; }
 	public bool alive { get => health > 0; }
-	public Vector2 position { get; protected set; }	
+	public Vector2 position { get; set; }	
 	public Dictionary<string, Action> actions { get; protected set; }
-	
+
+	public Entity(
+	    char _glyph,
+	    IDrawBehaviour _drawBehaviour,
+	    int _movement,
+	    string _name,
+	    int _str,
+	    int _dex,
+	    int _inte,
+	    int _health
+	)
+	{
+	    glyph = _glyph;
+	    drawBehaviour = _drawBehaviour;
+	    movement = _movement;
+	    name = _name;
+	    str = _str;
+	    dex = _dex;
+	    health = _health;
+	    actions = new Dictionary<string, Action>();
+	    ac_modifier = 0;
+	}
+
 	public void Inflict(int damage)
 	{
 	    health -= damage;	

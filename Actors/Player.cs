@@ -1,28 +1,24 @@
 using System.Collections.Generic;
-using System.Numerics;
 using YARL.Actions;
 using YARL.Core;
-using YARL.Items;
+using YARL.Drawing;
 
 namespace YARL.Actors
 {
     public class Player: Entity
     {
-	public override int movement { get => 5; }
-	public override int armor_class { get => CalculateAC(); }
-	public override char glyph { get => '@';}
-	public override string name { get => "self"; }
-	public int ac_modifier { get; protected set; }
 	public int gold { get; protected set; }
 	public Inventory inventory;
 	
-	public Player(Vector2 vector)
+	public Player(
+	    IDrawBehaviour _drawBehaviour,
+	    int _str,
+	    int _dex,
+	    int _inte,
+	    int _health
+	) : base('@',_drawBehaviour, 6, "self", _str, _dex, _inte, _health)
 	{
-	    health = 10;
-	    position = vector;
-	    actions = new Dictionary<string, Action>();
 	    inventory = new Inventory(this);
-	    str = 2;
 	}
 
 	public int CalculateAC()

@@ -5,20 +5,19 @@ using Serilog;
 using YARL.Topography;
 using YARL.Actors;
 using YARL.Items;
+using YARL.Drawing;
 
 namespace YARL.Core
 {
-    class Level
+    public class Level
     {
 	public int Width { get; protected set; }
 	public int Height { get; protected set; }
-	public int maxRooms { get; protected set; }
-	public int roomMaxSize { get; protected set; }
-	public int roomMinSize { get; protected set; }
 	public int level { get; protected set; }
 	public List<Rectangle> Rooms { get => map.Rooms; }
 	Map map;
 	MapGenerator mapGenerator;
+	EntityFactory entityFactory;	
 	List<Entity> entities;
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
 	Player player;
@@ -29,14 +28,13 @@ namespace YARL.Core
 	{
 	    Width = w;
 	    Height = h;
-	    maxRooms = _maxRooms;
-	    roomMaxSize = _roomMaxSize;
-	    roomMinSize = _roomMinSize;
 	    level = _level;
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
-	    mapGenerator = new MapGenerator(Width, Height, maxRooms, roomMaxSize, roomMinSize);
+	    mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
 	    entities = new List<Entity>();
+	    entityFactory = new EntityFactory(new DefaultDraw());
 	    map = mapGenerator.CreateMap();
+	    PopulateLevel();
 	}
 
 	public Tile this[Vector2 v]
@@ -81,6 +79,26 @@ namespace YARL.Core
 		}
 	    }
 	}
+
+	public void PopulateLevel()
+	{
+	    foreach(var room in Rooms)
+	    {
+		if (Roller.Roll(10) > 7)
+		{
+		    var goblin = entityFactory.CreateGoblin();
+		    goblin.position = room.Center + new Vector2(Roller.Roll(2, 0), 0);
+		    AddEntity(goblin);
+		}
+
+		if (Roller.Roll(10) > 7)
+		{
+		    var goblin = entityFactory.CreateGoblin();
+		    goblin.position = room.Center + new Vector2(0, Roller.Roll(2, 0));
+		    AddEntity(goblin);
+		}
+	    }
+	}
 	
 	public void AddPlayer(Player p)
 	{
@@ -88,6 +106,11 @@ namespace YARL.Core
 	    var room = map.GetRoom(p.position);
 	    if (!room.IsEmpty)
 		AddToRoom(room, player);
+	}
+
+	public Vector2 GetPlayerPosition()
+	{
+	    return player.position;
 	}
 
 	public bool Move(Player player, Vector2 dir)
