@@ -14,19 +14,18 @@ namespace YARL.Actions
 	
 	StringBuilder sb;
 
-	public int attackModifier { get; set; }
-	public int damageModifier { get; set; }
 	public int dice { get; set; }
 	public int numberOfDice { get; set; }
 
-	public override string Do(List<Entity> targets)
+	public override string Do(List<Entity> targets, Entity actor)
 	{
+
 	    sb = new StringBuilder();
 	    foreach (var target in targets)
 	    {
-		if (Roller.Roll(20) + attackModifier > target.armor_class)
+		if (Roller.Roll(20) + actor.str > target.armor_class)
 		{
-		    int damage = Roller.Roll(dice, numberOfDice) + damageModifier * numberOfDice;
+		    int damage = Roller.Roll(dice, numberOfDice) + actor.str * numberOfDice;
 		    target.Inflict(damage);
 		    sb.AppendLine($"You have hit {target.name} and dealt {damage} damage");
 		} else {

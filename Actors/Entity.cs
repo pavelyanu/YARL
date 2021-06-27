@@ -10,13 +10,14 @@ namespace YARL.Actors
 	public abstract char glyph { get; }
 	public IDrawBehaviour drawBehaviour { get; set; }
 
-	public int health { get; protected set; }
 	public abstract int movement { get; }
 	public abstract int armor_class { get; }
 	public abstract string name { get; }
+	public int str { get; protected set; }
+	public int health { get; protected set; }
+	public bool alive { get => health > 0; }
 	public Vector2 position { get; protected set; }	
 	public Dictionary<string, Action> actions { get; protected set; }
-	public bool alive { get => health > 0; }
 	
 	public void Inflict(int damage)
 	{

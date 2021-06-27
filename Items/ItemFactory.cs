@@ -6,9 +6,12 @@ namespace YARL.Items
     class ItemFactory
     {
 	public IDrawBehaviour drawBehaviour { get; set; }
+	ActionFactory actionFactory;
+
 	public ItemFactory()
 	{
 	    drawBehaviour = new DefaultDraw();
+	    actionFactory = new ActionFactory();
 	}
 
 	public Item Create(
@@ -42,16 +45,6 @@ namespace YARL.Items
 
 	public Item CreateShortSword()
 	{
-	    var attack = new Attack();
-	    attack.cost = 1;
-	    attack.numOfTargets = 1;
-	    attack.name = "Shor sword attack";
-	    attack.range = 1;
-	    attack.attackModifier = 1;
-	    attack.damageModifier = 1;
-	    attack.dice = 6;
-	    attack.numberOfDice = 1;
-	    
 	    return Create(
 		drawBehaviour: drawBehaviour,
 		glyph: '-',
@@ -62,7 +55,7 @@ namespace YARL.Items
 		possessionType: PossessionType.Weapon,
 		equipmentType: EquipmentType.Hands,
 		pickBehaviour: new AddItemBehaviour(),
-		equipBehaviour: new AddActionBehaviour(attack),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateShortSwordAttack()),
 		useBehaviour: new DoNothing()
 	    );
 

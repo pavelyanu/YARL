@@ -22,6 +22,7 @@ namespace YARL.Actors
 	    position = vector;
 	    actions = new Dictionary<string, Action>();
 	    inventory = new Inventory(this);
+	    str = 2;
 	}
 
 	public int CalculateAC()

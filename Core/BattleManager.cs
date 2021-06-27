@@ -23,6 +23,7 @@ namespace YARL.Core
 	Action chosen_action;
 	List<Entity> targets;
 	StringBuilder sb;
+	string bottomMessage;
 
 	public BattleManager(Level _level, Player _player)
 	{
@@ -49,88 +50,96 @@ namespace YARL.Core
 	{
 	    if (targeting)
 	    {
-		Vector2 dir = new Vector2(0, 0);
-		switch (key)
+		if ("jkhl\n\r".Contains(key))
 		{
-		    case 'j':
-			dir = new Vector2(0, 1);
-			break;
-		    case 'k':
-			dir = new Vector2(0, -1);
-			break;
-		    case 'h':
-			dir = new Vector2(-1, 0);
-			break;
-		    case 'l':
-			dir = new Vector2(1, 0);
-			break;
-		    case '\n':
-			if (chosen_action is not null && GetEntityAt(cursor) is not null)
-			{
-			    if (GetEntityAt(cursor) is not Player)
+		    bottomMessage = "";
+		    Vector2 dir = new Vector2(0, 0);
+		    switch (key)
+		    {
+			case 'j':
+			    dir = new Vector2(0, 1);
+			    break;
+			case 'k':
+			    dir = new Vector2(0, -1);
+			    break;
+			case 'h':
+			    dir = new Vector2(-1, 0);
+			    break;
+			case 'l':
+			    dir = new Vector2(1, 0);
+			    break;
+			case '\n':
+			    if (chosen_action is not null && GetEntityAt(cursor) is not null)
 			    {
-				targets.Add(GetEntityAt(cursor));
+				if (GetEntityAt(cursor) is not Player)
+				{
+				    targets.Add(GetEntityAt(cursor));
+				}
+				if (targets.Count == chosen_action.numOfTargets)
+				{
+				    ProcessAction(player, chosen_action, targets);
+				    cursor = player.position;
+				    targeting = false;
+				}
 			    }
-			    if (targets.Count == chosen_action.numOfTargets)
-			    {
-				ProcessAction(player, chosen_action, targets);
-				cursor = player.position;
-				targeting = false;
-			    }
-			}
-			break;
-		    case '\r':
-			targeting = false;
-			break;
-		    
-		}
-		var result = cursor + dir;
-		var difference = player.position - result;
-		float distance = difference.Length();
-		Log.Information("Trying to move the cursor");
-		Log.Information($"The distance is {distance}");
-		if (distance < chosen_action.range + 1)
-		{
-		    MoveCursor(dir);
+			    break;
+			case '\r':
+			    targeting = false;
+			    break;
+			
+		    }
+		    var result = cursor + dir;
+		    var difference = player.position - result;
+		    float distance = difference.Length();
+		    Log.Information("Trying to move the cursor");
+		    Log.Information($"The distance is {distance}");
+		    if (distance < chosen_action.range + 1)
+		    {
+			MoveCursor(dir);
+		    }
 		}
 	    } else
 	    {
-		Vector2 dir;
-		switch (key)
+		if ("jkhl1234567890\r".Contains(key))
 		{
-		    case 'j':
-			dir = new Vector2(0, 1);
-			ProcessMovement(player, dir);
-			break;
-		    case 'k':
-			dir = new Vector2(0, -1);
-			ProcessMovement(player, dir);
-			break;
-		    case 'h':
-			dir = new Vector2(-1, 0);
-			ProcessMovement(player, dir);
-			break;
-		    case 'l':
-			dir = new Vector2(1, 0);
-			ProcessMovement(player, dir);
-			break;
-		    case '1':
-			Log.Information("Battlemanager has recorded 1");
-			if (player.actions.Keys.Count > 0 && action_left > 0)
-			{
-			    Log.Information("Player may make an aciton");
-			    chosen_action = player.actions.Values.ToList()[0];
-			    targeting = true;
-			    cursor = new Vector2(player.position.X, player.position.Y);
-			    targets = new List<Entity>();
-			}else
-			{
-			    Log.Information("Player may not make an aciton");
-			}
-			break;
-		    case '\r':
-			StartTurn();
-			break;
+		    bottomMessage = "";
+		    Vector2 dir;
+		    switch (key)
+		    {
+			case 'j':
+			    dir = new Vector2(0, 1);
+			    ProcessMovement(player, dir);
+			    break;
+			case 'k':
+			    dir = new Vector2(0, -1);
+			    ProcessMovement(player, dir);
+			    break;
+			case 'h':
+			    dir = new Vector2(-1, 0);
+			    ProcessMovement(player, dir);
+			    break;
+			case 'l':
+			    dir = new Vector2(1, 0);
+			    ProcessMovement(player, dir);
+			    break;
+			case '1':
+			    Log.Information("Battlemanager has recorded 1");
+			    if (player.actions.Keys.Count > 0 && action_left > 0)
+			    {
+				Log.Information("Player may make an aciton");
+				chosen_action = player.actions.Values.ToList()[0];
+				targeting = true;
+				cursor = new Vector2(player.position.X, player.position.Y);
+				targets = new List<Entity>();
+			    }else
+			    {
+				Log.Information("Player may not make an aciton");
+			    }
+			    break;
+			case '\r':
+			    StartTurn();
+			    break;
+		    }
 		}
 	    }
 	}
@@ -158,7 +167,8 @@ namespace YARL.Core
 
 	public void ProcessAction(Player player, Action action, List<Entity> targets)
 	{
-	    action.Do(targets);
+	    sb.Clear();
+	    sb.Append(action.Do(targets, player));
 	    foreach (var target in targets)
 	    {
 		if (!target.alive)
@@ -167,6 +177,7 @@ namespace YARL.Core
 		}
 	    }
 	    action_left -= 1;
+	    bottomMessage = sb.ToString(); 
 	}
 
 	bool Occupied(Vector2 position)
@@ -202,14 +213,20 @@ namespace YARL.Core
 
 	public string DrawOnBottom()
 	{
-	    sb.Clear();	
-	    sb.AppendLine($"movement - {movement_left}, actions - {action_left}, target mode - {targeting}");
-	    if (targeting)
+	    if (bottomMessage is null || bottomMessage == "")
 	    {
-		var distance = (cursor - player.position).Length();
-		sb.AppendLine($"the distance to target is {distance}");
+		sb.Clear();	
+		sb.AppendLine($"movement - {movement_left}, actions - {action_left}, target mode - {targeting}");
+		if (targeting)
+		{
+		    var distance = (cursor - player.position).Length();
+		    sb.AppendLine($"the distance to target is {distance}");
+		}
+		return sb.ToString();
+	    } else
+	    {
+		return bottomMessage;
 	    }
-	    return sb.ToString();
 	}
     }
 }
