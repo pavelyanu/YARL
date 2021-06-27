@@ -53,9 +53,9 @@ namespace YARL.Actors
 	{
 	    return new Player(
 		_drawBehaviour: drawBehaviour,
-		_str: Roller.Roll(6, 3),
-		_dex: Roller.Roll(6, 3),
-		_inte: Roller.Roll(6, 3),
+		_str: 0,
+		_dex: 0,
+		_inte: 0,
 		_health: 8
 	    );
 	}

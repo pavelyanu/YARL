@@ -47,8 +47,7 @@ namespace YARL.Core
 			if (chooseMap is not null)
 			{
 			    state = State.SelectingEquipped;
-			    Log.Information("Choosemap is not null");
-			} else Log.Information("Choosemap is null");
+			}
 			break;
 		}
 	    } else if (state == State.SelectingEquipment)

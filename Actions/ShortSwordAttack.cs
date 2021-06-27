@@ -27,9 +27,9 @@ namespace YARL.Actions
 		{
 		    int damage = Roller.Roll(dice, numberOfDice) + actor.str * numberOfDice;
 		    target.Inflict(damage);
-		    sb.AppendLine($"You have hit {target.name} and dealt {damage} damage");
+		    sb.AppendLine($"{actor.name} have hit {target.name} and dealt {damage} damage");
 		} else {
-		    sb.AppendLine($"You have not managed to hit {target.name}");
+		    sb.AppendLine($"{actor.name} have not managed to hit {target.name}");
 		}
 	    }
 	    return sb.ToString();

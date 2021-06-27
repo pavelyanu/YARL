@@ -71,16 +71,10 @@ namespace YARL.Topography
 		int xOrigin, int yOrigin, int xDestination, int yDestination
 		)
 	{
-	    Log.Information($"Getting line between: ");
-	    Log.Information($"{xOrigin}, {yOrigin} and {xDestination}, {yDestination}");
 	    xOrigin = ClampX( xOrigin );
 	    yOrigin = ClampY( yOrigin );
 	    xDestination = ClampX( xDestination );
 	    yDestination = ClampY( yDestination );
-	    Log.Information($"parameters of the console are:");
-	    Log.Information($"width: {Width}, height: {Height}");
-	    Log.Information($"Coordinates were corrected to:");
-	    Log.Information($"{xOrigin}, {yOrigin} and {xDestination}, {yDestination}");
 
 	    int dx = Math.Abs( xDestination - xOrigin );
 	    int dy = Math.Abs( yDestination - yOrigin );
@@ -92,7 +86,6 @@ namespace YARL.Topography
 	    {
 		if (tiles.ContainsKey(new Vector2(xOrigin, yOrigin)))
 		{
-		    Log.Information($"point {xOrigin}, {yOrigin} is on this line");
 		    yield return this[ xOrigin, yOrigin ];
 		} else
 		{

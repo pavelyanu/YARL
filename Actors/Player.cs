@@ -16,7 +16,7 @@ namespace YARL.Actors
 	    int _dex,
 	    int _inte,
 	    int _health
-	) : base('@',_drawBehaviour, 6, "self", _str, _dex, _inte, _health)
+	) : base('@',_drawBehaviour, 6, "you", _str, _dex, _inte, _health)
 	{
 	    inventory = new Inventory(this);
 	}

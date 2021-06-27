@@ -34,7 +34,6 @@ namespace YARL.Topography
 
 	public Map CreateMap()
 	{
-	    Log.Information("Started Map Creation");
 	    for ( int r = 0; r < _maxRooms; r++ )
 	    {
 		int roomWidth = random.Next( _roomMinSize * 2, _roomMaxSize );
@@ -85,11 +84,9 @@ namespace YARL.Topography
 	    }
 
 	    AddWalls(_map);
-	    Log.Information("Added rooms");
 
 	    foreach ( Rectangle room in _map.Rooms )
 	    {
-		Log.Information($"Creating a doors for {_map.Rooms.IndexOf(room)}");
 		CreateDoors( room );
 	    }
 
@@ -130,8 +127,6 @@ namespace YARL.Topography
 	    int yMin = room.Top;
 	    int yMax = room.Bottom;
 
-	    Log.Information($"the room's coordinates are:");
-	    Log.Information($"xMin = {xMin}, xMax = {xMax}, yMin = {yMin}, yMax = {yMax},");
 
 
 	    List<Tile> borderTiles = _map.GetLine( xMin, yMin, xMax, yMin ).ToList();
@@ -139,13 +134,11 @@ namespace YARL.Topography
 	    borderTiles.AddRange( _map.GetLine( xMin, yMax, xMax, yMax ).ToList() );
 	    borderTiles.AddRange( _map.GetLine( xMax, yMin, xMax, yMax ).ToList() );
 
-	    Log.Information("Going through border cells and checking if they are potential doors");
 
 	    foreach ( Tile cell in borderTiles )
 	    {
 		if ( IsPotentialDoor( cell ) )
 		{
-		    Log.Information($"The cell {LogTile(cell)} is a door");
 		    _map.SetCell(tileFactory.Door(new Vector2(cell.position.X, cell.position.Y)));
 		}
 	    }
@@ -153,10 +146,8 @@ namespace YARL.Topography
 
 	private bool IsPotentialDoor( Tile cell )
 	{
-	    Log.Information($"checking if {LogTile(cell)} is potential Door");
 	    if ( !cell.walkable )
 	    {
-		Log.Information($"{LogTile(cell)} is not walkable");
 		return false;
 	    }
 
@@ -165,11 +156,6 @@ namespace YARL.Topography
 	    Tile top = _map[(int) cell.position.X, (int) cell.position.Y - 1];
 	    Tile bottom = _map[(int) cell.position.X, (int) cell.position.Y + 1];
 
-	    Log.Information("The surrounding cells are:");
-	    Log.Information($"right - {LogTile(right)}");
-	    Log.Information($"left - {LogTile(left)}");
-	    Log.Information($"top - {LogTile(top)}");
-	    Log.Information($"bottom - {LogTile(bottom)}");
 
 	    if ( _map.isDoor(cell.position) ||
 		    _map.isDoor(right.position) ||
@@ -177,21 +163,17 @@ namespace YARL.Topography
 		    _map.isDoor(top.position) ||
 		    _map.isDoor(bottom.position))
 	    {
-		Log.Information($"the door near {LogTile(cell)} already exists");	
 		return false;
 	    }
 
 	    if ( right.walkable && left.walkable && !top.walkable && !bottom.walkable )
 	    {
-		Log.Information($"{LogTile(cell)} is a door because only right and left are walkable");
 		return true;
 	    }
 	    if ( !right.walkable && !left.walkable && top.walkable && bottom.walkable )
 	    {
-		Log.Information($"{LogTile(cell)} is a door because only top and bottom are walkable");
 		return true;
 	    }
-	    Log.Information($"{LogTile(cell)} is not a door after all");
 	    return false;
 	}
 

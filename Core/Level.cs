@@ -84,14 +84,16 @@ namespace YARL.Core
 	{
 	    foreach(var room in Rooms)
 	    {
-		if (Roller.Roll(10) > 7)
+		if (Rooms[0] == room)
+		    continue;
+		if (Roller.Roll(10) > 5)
 		{
 		    var goblin = entityFactory.CreateGoblin();
 		    goblin.position = room.Center + new Vector2(Roller.Roll(2, 0), 0);
 		    AddEntity(goblin);
 		}
 
-		if (Roller.Roll(10) > 7)
+		if (Roller.Roll(10) > 5)
 		{
 		    var goblin = entityFactory.CreateGoblin();
 		    goblin.position = room.Center + new Vector2(0, Roller.Roll(2, 0));
@@ -141,9 +143,6 @@ namespace YARL.Core
 	    {
 		if (roomPopulation[currentRoom].Count > 1)
 		{
-		    Log.Information("Player is in the room with: ");
-		    Log.Information(roomPopulation[currentRoom][0].ToString());
-		    Log.Information(roomPopulation[currentRoom][1].ToString());
 		    return true;
 		}
 	    }
@@ -226,6 +225,11 @@ namespace YARL.Core
 	    return map.GetLine(
 		(int) origin.X, (int) origin.Y, (int) destination.X, (int) destination.Y
 	    ).ToList();
+	}
+
+	public int GetDistance(Vector2 origin, Vector2 destination)
+	{
+	    return GetLine(origin, destination).Count;
 	}
 
     }

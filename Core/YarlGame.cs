@@ -18,6 +18,7 @@ namespace YARL.Core {
 	protected int Height;
 	protected int Width;
 	bool inBattle { get => level.PlayerInRoomWithMonster(); }
+	bool ended;
 	Level level;
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
@@ -42,6 +43,7 @@ namespace YARL.Core {
 	    level.AddEntity(entityFactory.CreateGoblin());
 	    Item sword = itemFactory.CreateShortSword();
 	    level.PutItem(sword, player.position + new Vector2(0, 1));
+	    ended = false;
 	}
 
 	public void  SetConsoles(
@@ -55,33 +57,40 @@ namespace YARL.Core {
 
 	public void Update(string input)
 	{
-	    if (!inBattle)
+	    if (player.alive)
 	    {
-		Log.Information("Player is not in battle");		
-		if (input[0] == 'k')
-		    level.Move(player, new Vector2(0, -1));
-		else if(input[0] == 'h')
-		    level.Move(player, new Vector2(-1, 0));
-		else if(input[0] == 'j')
-		    level.Move(player, new Vector2(0, 1));
-		else if(input[0] == 'l')
-		    level.Move(player, new Vector2(1, 0));
-		else if("era".Contains(input[0]))
-		    inventoryManager.ProcessInput(input[0]);
-		else if(input[0] == ',')
+		if (!inBattle)
 		{
-		    level.PlayerPickItem();
-		}
-		if (inBattle)
+		    if (input[0] == 'k')
+			level.Move(player, new Vector2(0, -1));
+		    else if(input[0] == 'h')
+			level.Move(player, new Vector2(-1, 0));
+		    else if(input[0] == 'j')
+			level.Move(player, new Vector2(0, 1));
+		    else if(input[0] == 'l')
+			level.Move(player, new Vector2(1, 0));
+		    else if("era".Contains(input[0]))
+			inventoryManager.ProcessInput(input[0]);
+		    else if(input[0] == ',')
+		    {
+			level.PlayerPickItem();
+		    }
+		    if (inBattle)
+		    {
+			battleManager = new BattleManager(level, player);
+		    }
+		} else 
 		{
-		    Log.Information("Player has entered the room with monsters");
-		    battleManager = new BattleManager(level, player);
+		    battleManager.ProcessInput(input[0]);
 		}
 	    } else 
 	    {
-		Log.Information("Player is in battle!");		
-		battleManager.ProcessInput(input[0]);
+		if ("qwertyuiopasdfghjklzxcvbnm".Contains(input[0]))
+		{
+		    ended = true;
+		}
 	    }
+	    
 	}
 
 	public void Draw()
@@ -90,32 +99,39 @@ namespace YARL.Core {
 	    side.Clear();
 	    bottom.Clear();
 	    level.UpdateView();
-	    for (int h = 0; h < Height; h++)
+	    if (!ended)
 	    {
-		for (int w = 0; w < Width; w++)
+		for (int h = 0; h < Height; h++)
 		{
-		    var vector = new Vector2(w, h);
-		    main.Print(w, h, level[vector].Draw().ToString());
+		    for (int w = 0; w < Width; w++)
+		    {
+			var vector = new Vector2(w, h);
+			main.Print(w, h, level[vector].Draw().ToString());
+		    }
 		}
-	    }
-	    main.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());
-	    if (inBattle)
-	    {
-		foreach(var m in battleManager.monsters)
+		main.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());
+		if (inBattle)
 		{
-		    main.Print((int) m.position.X, (int) m.position.Y, m.Draw().ToString());
-		}
-		side.Print(0, 0, battleManager.DrawOnSide());
-		bottom.Print(0, 0, battleManager.DrawOnBottom());
-		if (battleManager.targeting)
+		    foreach(var m in battleManager.monsters)
+		    {
+			main.Print((int) m.position.X, (int) m.position.Y, m.Draw().ToString());
+		    }
+		    side.Print(0, 0, battleManager.DrawOnSide());
+		    bottom.Print(0, 0, battleManager.DrawOnBottom());
+		    if (battleManager.targeting)
+		    {
+			main.SetBackground(
+			    (int) battleManager.cursor.X, (int) battleManager.cursor.Y, Color.Yellow);
+		    }
+		} else
 		{
-		    main.SetBackground(
-			(int) battleManager.cursor.X, (int) battleManager.cursor.Y, Color.Yellow);
+		side.Print(0, 0, inventoryManager.Draw());
 		}
 	    } else
 	    {
-	    side.Print(0, 0, inventoryManager.Draw());
+		main.Print(0, 5, "You have died. You can quit the game by clicking on red x in the corner");
 	    }
+	    
 	}
     }
 }
