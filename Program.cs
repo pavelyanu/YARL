@@ -10,7 +10,6 @@ namespace YARL
     class Program
     {
 	static Console main;
-	static Console debug;
 	static Console bottom;
 	static Console side;
 	public const int Width = 100;
@@ -65,11 +64,6 @@ namespace YARL
 	{
 	    main = new Console(Width, Height);
 	    main.Position = new Point(0, 0);
-	    debug = new Console(5, 5);
-	    debug.Position = new Point(0, 0);
-	    debug.Fill(null, Color.Red, null);
-	    debug.Parent = main;
-	    main.Components.Add(new MouseMoveComponent());
 	    bottom = new Console(InvWidth, Height);
 	    bottom.Position = new Point(Width, 0);
 	    bottom.Parent = main;
