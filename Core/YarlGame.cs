@@ -38,7 +38,7 @@ namespace YARL.Core {
 	    inventoryManager = new InventoryManager(player);
 	    level.AddPlayer(player);
 	    ended = false;
-	    showInventory = false;
+	    showInventory = true;
 	}
 
 	public void  SetConsoles(
