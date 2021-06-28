@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Numerics;
 using YARL.Actors;
-using YARL.Actions;
-using YARL.Topography;
 using YARL.Drawing;
 
 namespace YARL.Items

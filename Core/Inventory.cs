@@ -54,6 +54,7 @@ namespace YARL.Core
 	    }else
 	    {
 		items[item.name] = item;
+		item.amount = 1;
 	    }
 	}
 
@@ -76,7 +77,7 @@ namespace YARL.Core
 	{
 	    if (items.ContainsKey(item.name))
 	    {
-		items.Remove(item.name);
+		Remove(item);
 		return item.Use(player);
 	    } else 
 	    {

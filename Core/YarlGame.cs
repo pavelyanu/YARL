@@ -1,11 +1,7 @@
-using System.Text;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using Microsoft.Xna.Framework;
 using Serilog;
 using SadConsole;
-using YARL.Topography;
 using YARL.Actors;
 using YARL.Drawing;
 using YARL.Items;
@@ -123,7 +119,7 @@ namespace YARL.Core {
 		main.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());
 		if (inBattle)
 		{
-		    foreach(var m in battleManager.monsters)
+		    foreach(var m in battleManager.GetMonsters())
 		    {
 			main.Print((int) m.position.X, (int) m.position.Y, m.Draw().ToString());
 		    }

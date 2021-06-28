@@ -74,7 +74,12 @@ namespace YARL.Items
 	}
 	public string Use(Player player)
 	{
-	    player.Inflict(-healing);
+	    int result = player.health + healing;
+	    if (result > player.maxHealth)
+	    {
+		result = player.maxHealth - player.health;
+	    }
+	    player.Inflict(-result);
 	    return $"You have healed yourself up to {player.health}";
 	}
     }

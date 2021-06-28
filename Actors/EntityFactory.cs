@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using YARL.Items;
 using YARL.Actions;
 using YARL.Drawing;
-using YARL.Core;
 
 namespace YARL.Actors
 {

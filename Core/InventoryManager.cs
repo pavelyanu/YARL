@@ -137,7 +137,13 @@ namespace YARL.Core
 		    }
 		    foreach(var item in inventory.items.Keys)
 		    {
-			result.Add(item);
+			if (inventory.items[item].amount == 1)
+			{
+			    result.Add(item);
+			} else 
+			{
+			    result.Add($"{item} ({inventory.items[item].amount})");
+			}
 		    }
 		    result.Add($"");
 		    result.Add($"Your health is - {inventory.player.health}");

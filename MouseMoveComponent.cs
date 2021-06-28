@@ -1,6 +1,5 @@
 using SadConsole.Components;
 using SadConsole.Input;
-using Microsoft.Xna.Framework;
 
 namespace YARL
 {

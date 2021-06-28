@@ -1,10 +1,9 @@
-﻿using System;
-using Serilog;
-using SadConsole;
+﻿using Serilog;
 using Microsoft.Xna.Framework;
 using Console = SadConsole.Console;
 using System.Text;
 using YARL.Core;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace YARL
 {
@@ -36,11 +35,11 @@ namespace YARL
 
 	private static void Update(GameTime game)
 	{
-	    if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))
+	    if (SadConsole.Global.KeyboardState.IsKeyDown(Keys.Enter))
 	    {
 		Log.Information($"Enter has been pressed");
 		model.Update('\n'.ToString());
-	    } else if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+	    } else if (SadConsole.Global.KeyboardState.IsKeyDown(Keys.Escape))
 	    {
 		Log.Information($"Escape has been pressed");
 		model.Update('\r'.ToString());

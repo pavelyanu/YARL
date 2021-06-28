@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Text;
-using System;
 using Serilog;
 using YARL.Actors;
 using Action = YARL.Actions.Action;
@@ -15,7 +13,6 @@ namespace YARL.Core
 	Level level;
 	Rectangle room;
 	Player player;
-	public List<Monster> monsters;	
 	public Vector2 cursor;	
 	List<Entity> initiative;
 	int movement_left;
@@ -31,11 +28,10 @@ namespace YARL.Core
 	{
 	    level = _level;
 	    player = _player;
-	    monsters = level.GetMonstersNearPlayer();
 	    room = level.currentRoom;
 	    cursor = new Vector2(player.position.X, player.position.Y);
 	    initiative = new List<Entity>();
-	    initiative.AddRange(monsters);
+	    initiative.AddRange(level.GetMonstersNearPlayer());
 	    initiative.Add(player);
 	    bottomMessage = new List<string>();
 	    targeting = false;
@@ -51,7 +47,7 @@ namespace YARL.Core
 
 	public void EndTurn()
 	{
-	    foreach(var monster in monsters)
+	    foreach(var monster in GetMonsters())
 	    {
 		Log.Information($"Logging actions of the {monster.name}");
 		ProcessMonsterAction(monster);
@@ -186,7 +182,7 @@ namespace YARL.Core
 		{
 		    if (level.Move(player, dir))
 		    {
-			foreach(var monster in monsters)
+			foreach(var monster in GetMonsters())
 			{
 			    if (level.GetDistance(result, monster.position) == 3 &&
 				level.GetDistance(previous, monster.position) == 2)
@@ -248,6 +244,7 @@ namespace YARL.Core
 			}
 		    }
 		    level.RemoveEntity(target);
+		    initiative.Remove(target);
 		}
 	    }
 	    action_left -= 1;
@@ -298,6 +295,17 @@ namespace YARL.Core
 		    return entity;
 	    }
 	    return null;
+	}
+
+	public List<Monster> GetMonsters()
+	{
+	    var result = new List<Monster>();
+	    foreach(var entity in initiative)
+	    {
+		if (entity is Monster)
+		    result.Add(entity as Monster);
+	    }
+	    return result;
 	}
 	    
 	public List<string> DrawOnSide()
