@@ -53,9 +53,9 @@ namespace YARL.Actors
 	{
 	    return new Player(
 		_drawBehaviour: drawBehaviour,
-		_str: 0,
-		_dex: 0,
-		_inte: 0,
+		_str: 2,
+		_dex: 2,
+		_inte: 2,
 		_health: 8
 	    );
 	}
@@ -64,20 +64,58 @@ namespace YARL.Actors
 	{
 	    var loot = new List<Item>();
 	    loot.Add(itemFactory.CreateShortSword());
+	    loot.Add(itemFactory.CreateLightArmour());
 	    return CreateMonster(
 		glyph: 'g',
 		drawBehaviour: drawBehaviour,
 		movement: 5,
 		name: "Goblin",
-		str: -2,
+		str: 0,
 		dex: 0,
 		inte: -3,
 		health: 5,
 		loot: loot,
-		lootChance: 0.1,
+		lootChance: 0.7,
 		action: actionFactory.CreateShortSwordAttack()
 	    );
  	}
 
+	public Entity CreateGoblinWithBow()
+	{
+	    var loot = new List<Item>();
+	    loot.Add(itemFactory.CreateLightArmour());
+	    return CreateMonster(
+		glyph: 'b',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Goblin with bow",
+		str: 0,
+		dex: 1,
+		inte: -3,
+		health: 4,
+		loot: loot,
+		lootChance: 0.7,
+		action: actionFactory.CreateBowAttack()
+	    );
+ 	}
+
+	public Entity CreateOrk()
+	{
+	    var loot = new List<Item>();
+	    loot.Add(itemFactory.CreateLongSword());
+	    return CreateMonster(
+		glyph: 'o',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Ork",
+		str: 2,
+		dex: 0,
+		inte: -3,
+		health: 4,
+		loot: loot,
+		lootChance: 0.9,
+		action: actionFactory.CreateLongSwordAttack()
+	    );
+ 	}
     }
 }

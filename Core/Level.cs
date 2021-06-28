@@ -18,22 +18,34 @@ namespace YARL.Core
 	Map map;
 	MapGenerator mapGenerator;
 	EntityFactory entityFactory;	
+	ItemFactory itemFactory;
 	List<Entity> entities;
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
+	Dictionary<char, Item> chooseMap;
 	Player player;
+	string bottomMessage;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
 	public bool playerInCorridor { get => currentRoom.IsEmpty; }
+	public bool standingOnItems { get => !(this[player.position].items is null ||
+					    this[player.position].items.Count == 0); }
+	public bool choosingItem;
+	public bool playerHasWon { get => entities.Count == 0 && player.inventory.items.ContainsKey("Gem"); }
 
 	public Level(int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level)
 	{
 	    Width = w;
 	    Height = h;
 	    level = _level;
+	    choosingItem = false;
+	    bottomMessage = "";
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
+	    chooseMap = new Dictionary<char, Item>();
 	    mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
 	    entities = new List<Entity>();
 	    entityFactory = new EntityFactory(new DefaultDraw());
+	    itemFactory = new ItemFactory(new DefaultDraw());
 	    map = mapGenerator.CreateMap();
+	    Prepare();
 	    PopulateLevel();
 	}
 
@@ -51,6 +63,66 @@ namespace YARL.Core
 	    {
 		return map[x, y];
 	    }
+	}
+
+	public bool ProcessInput(char key)
+	{
+	    if (entities.Count == 0)
+	    {
+		bottomMessage = "You have killed all the monsters. Now you have to find a gem";
+	    }
+	    bool result = false;
+	    if (choosingItem)
+	    {
+		if (key == '\r')
+		{
+		    choosingItem = false;
+		}
+		if (chooseMap.ContainsKey(key))
+		{
+		    PlayerPickItem(chooseMap[key].name);
+		    if (chooseMap[key].name == "Gem")
+			bottomMessage = "You have found the gem. Now you have to kill all the monsters!";
+		    choosingItem = false;
+		} else 
+		{
+		    bottomMessage = "There is no such item there";
+		}
+		return result;
+	    }
+	    if ("hjkl".Contains(key))
+	    {
+		bottomMessage = "";
+	    }
+	    if (key == 'k')
+		result = Move(player, new Vector2(0, -1));
+	    else if (key == 'h')
+		result = Move(player, new Vector2(-1, 0));
+	    else if (key == 'j')
+		result = Move(player, new Vector2(0, 1));
+	    else if (key == 'l')
+		result = Move(player, new Vector2(1, 0));
+	    else if (key ==',')
+	    {
+		if (standingOnItems)
+		{
+		    chooseMap = GetChooseMap(this[player.position].items);
+		    choosingItem = true;
+		}
+	    }
+	    return result;
+	}
+
+	Dictionary<char, Item> GetChooseMap(List<Item> items)
+	{
+	    if (items.Count == 0)
+		return null;
+	    Dictionary<char, Item> result = new Dictionary<char, Item>();
+	    for (int i = 0; i < items.Count; i++)
+	    {
+		result[(char) (i + 97)] = items[i];
+	    }
+	    return result;
 	}
 
 	public void UpdateView()
@@ -80,25 +152,54 @@ namespace YARL.Core
 	    }
 	}
 
+	public void Prepare()
+	{
+	    var firstRoom = Rooms[0];
+	    PutItem(itemFactory.CreateDagger(), firstRoom.Center + new Vector2(0, 1));
+	    PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
+	    var lastRoom = Rooms[Rooms.Count - 1];
+	    PutItem(itemFactory.CreateGoalGem(), lastRoom.Center);
+	    var ork1 = entityFactory.CreateOrk();
+	    ork1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
+	    AddEntity(ork1);
+	    var bowmen = entityFactory.CreateGoblinWithBow();
+	    bowmen.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
+	    AddEntity(bowmen);
+	}
+
 	public void PopulateLevel()
 	{
 	    foreach(var room in Rooms)
 	    {
-		if (Rooms[0] == room)
+		if (Rooms[0] == room || Rooms[Rooms.Count - 1] == room)
 		    continue;
-		if (Roller.Roll(10) > 5)
+		int number = Roller.Roll(3) - 1;
+		for (int i = 0; i < number; i++)
 		{
-		    var goblin = entityFactory.CreateGoblin();
-		    goblin.position = room.Center + new Vector2(Roller.Roll(2, 0), 0);
-		    AddEntity(goblin);
+		    int type = Roller.Roll(5);
+		    switch (type)
+		    {
+			case 1:
+			case 2:
+			    var goblin = entityFactory.CreateGoblin();
+			    goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
+			    AddEntity(goblin);
+			    break;
+			case 3:
+			case 4:
+			    var bowmen = entityFactory.CreateGoblinWithBow();
+			    bowmen.position = room.Center + new Vector2(Roller.Roll(3), i);
+			    AddEntity(bowmen);
+			    break;
+			case 5:
+			    var ork = entityFactory.CreateOrk();
+			    ork.position = room.Center + new Vector2(Roller.Roll(3), i);
+			    AddEntity(ork);
+			    break;
+		    }
 		}
-
-		if (Roller.Roll(10) > 5)
-		{
-		    var goblin = entityFactory.CreateGoblin();
-		    goblin.position = room.Center + new Vector2(0, Roller.Roll(2, 0));
-		    AddEntity(goblin);
-		}
+		if (Roller.Roll(10) > 7)
+		    PutItem(itemFactory.CreateHealingPotion(), room.Center + new Vector2(Roller.Roll(2), 2));
 	    }
 	}
 	
@@ -149,14 +250,22 @@ namespace YARL.Core
 	    return false;
 	}
 
-	public void PlayerPickItem()
+	public void PlayerPickItem(string name)
 	{
 	    var position = player.position;
 	    if (map[position].items.Count != 0)
 	    {
-		var item = map[position].items[0];
-		item.Pick(player);
-		map[position].items.Remove(item);
+		int index = -1;
+		foreach(var item in map[position].items)
+		{
+		    if (item.name == name)
+		    {
+			item.Pick(player);
+			index = map[position].items.IndexOf(item);
+		    }
+		}
+		if (index != -1)
+		    map[position].items.RemoveAt(index);
 	    }
 	}
 
@@ -217,7 +326,14 @@ namespace YARL.Core
 
 	public void PutItem(Item item, Vector2 position)
 	{
-	    map[position].items.Add(item);
+	    bool found = false;
+	    foreach(var i in map[position].items)
+	    {
+		if (i.name == item.name)
+		    i.amount++;
+	    }
+	    if (!found)
+		map[position].items.Add(item);
 	}
 
 	public List<Tile> GetLine(Vector2 origin, Vector2 destination)
@@ -231,6 +347,22 @@ namespace YARL.Core
 	{
 	    return GetLine(origin, destination).Count;
 	}
+	
+	public List<string> DrawOnSide()
+	{
+	    var result = new List<string>();
+	    foreach(var item in chooseMap)
+	    {
+		result.Add($"{item.Key} - {item.Value.name}");
+	    }
+	    return result;
+	}
 
+	public List<string> DrawOnBottom()
+	{
+	    var result = new List<string>();
+	    result.Add(bottomMessage);
+	    return result;
+	}
     }
 }

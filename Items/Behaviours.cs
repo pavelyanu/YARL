@@ -16,7 +16,7 @@ namespace YARL.Items
 
     public interface IUseBehaviour
     {
-	public void Use(Player player);
+	public string Use(Player player);
     }
 
     public class AddItemBehaviour : IPickBehaviour
@@ -46,6 +46,39 @@ namespace YARL.Items
 	}
     }
 
+    public class ArmourBehaviour : IEquipBehaviour
+    {
+	int ac;
+	public ArmourBehaviour(int _ac)
+	{
+	    ac = _ac;
+	}
+
+	public void Equip(Player player)
+	{
+	    player.AddArmour(ac);
+	}
+
+	public void UnEquip(Player player)
+	{
+	    player.RemoveArmour();
+	}
+    }
+
+    public class HealBehavour : IUseBehaviour
+    {
+	int healing;
+	public HealBehavour(int _healing)
+	{
+	    healing = _healing;
+	}
+	public string Use(Player player)
+	{
+	    player.Inflict(-healing);
+	    return $"You have healed yourself up to {player.health}";
+	}
+    }
+
     public class DoNothing : IPickBehaviour, IEquipBehaviour, IUseBehaviour
     {
 	public void Pick(Player player, Item item)
@@ -63,9 +96,9 @@ namespace YARL.Items
 
 	}
 
-	public void Use(Player player)
+	public string Use(Player player)
 	{
-
+	    return "";
 	}
     }
 

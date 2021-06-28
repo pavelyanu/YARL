@@ -17,14 +17,18 @@ namespace YARL.Core
     class InventoryManager
     {
 	Inventory inventory;
-	StringBuilder sb; 
 	Dictionary<char, Item> chooseMap;
+	string bottomMessage;
 	State state;	
+	public bool selecting { get => 
+				state == State.SelectingEquipment ||
+				state == State.SelectingEquipped ||
+				state == State.SelectingUsables; }
 
 	public InventoryManager(Player p)
 	{
 	    inventory = p.inventory;
-	    sb = new StringBuilder();
+	    bottomMessage = "";
 	    state = State.Overview;
 	    chooseMap = null;
 	}
@@ -33,6 +37,7 @@ namespace YARL.Core
 	{
 	    if (state == State.Overview)
 	    {
+		bottomMessage = "";
 		switch (key)
 		{
 		    case 'e':
@@ -49,20 +54,61 @@ namespace YARL.Core
 			    state = State.SelectingEquipped;
 			}
 			break;
+		    case 'u':
+			chooseMap = GetChooseMap(inventory.GetUsable());
+			if (chooseMap is not null)
+			{
+			    state = State.SelectingUsables;
+			}
+			break;
 		}
 	    } else if (state == State.SelectingEquipment)
 	    {
-		if (chooseMap.ContainsKey(key))
+		if (key == '\r')
 		{
-		    inventory.Equip(chooseMap[key]);	    
 		    state = State.Overview;
+		} else
+		{
+		    if (chooseMap.ContainsKey(key))
+		    {
+			inventory.Equip(chooseMap[key]);	    
+			state = State.Overview;
+		    } else 
+		    {
+			bottomMessage = "There is not such item";
+		    }
 		}
 	    } else if (state == State.SelectingEquipped)
 	    {
-		if (chooseMap.ContainsKey(key))
+		if (key == '\r')
 		{
-		    inventory.UnEquip(chooseMap[key].equipmentType);
 		    state = State.Overview;
+		} else 
+		{
+		    if (chooseMap.ContainsKey(key))
+		    {
+			inventory.UnEquip(chooseMap[key].equipmentType);
+			state = State.Overview;
+		    } else
+		    {
+			bottomMessage = "There is not such item";
+		    }
+		}
+	    } else if (state == State.SelectingUsables)
+	    {
+		if (key == '\r')
+		{
+		    state = State.Overview;
+		} else 
+		{
+		    if (chooseMap.ContainsKey(key))
+		    {
+			inventory.Use(chooseMap[key]);
+			state = State.Overview;
+		    } else
+		    {
+			bottomMessage = "There is not such item";
+		    }
 		}
 	    }
 	}
@@ -72,41 +118,48 @@ namespace YARL.Core
 	    if (items.Count == 0)
 		return null;
 	    Dictionary<char, Item> result = new Dictionary<char, Item>();
-	    for (int i = 97; i < 123; i++)
+	    for (int i = 0; i < items.Count; i++)
 	    {
-		result[(char) i] = items[0];
-		items.RemoveAt(0);
-		if (items.Count == 0)
-		    break;
+		result[(char) (i + 97)] = items[i];
 	    }
 	    return result;
 	}
 
-	public string Draw()
+	public List<string> DrawOnSide()
 	{
-	    sb.Clear();
+	    var result = new List<string>();
 	    switch (state)
 	    {
 		case State.Overview:
 		    foreach(var item in inventory.GetEquipped())
 		    {
-			sb.AppendLine($"You have {item.name} equipped");
+			result.Add($"You have {item.name} equipped");
 		    }
 		    foreach(var item in inventory.items.Keys)
 		    {
-			sb.AppendLine(item);
+			result.Add(item);
 		    }
-		    return sb.ToString();
+		    result.Add($"");
+		    result.Add($"Your health is - {inventory.player.health}");
+		    return result;
 		case State.SelectingEquipment:
 		case State.SelectingEquipped:
+		case State.SelectingUsables:
 		    foreach(var item in chooseMap)
 		    {
-			sb.AppendLine($"{item.Key} - {item.Value.name}");
+			result.Add($"{item.Key} - {item.Value.name}");
 		    }
-		    return sb.ToString();
+		    return result;
 		default:
-		    return "Error";
+		    return null;
 	    }
+	}
+
+	public List<string> DrawOnBottom()
+	{
+	    var result = new List<string>();
+	    result.Add(bottomMessage);
+	    return result;
 	}
     }
 }

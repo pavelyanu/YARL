@@ -18,6 +18,7 @@ namespace YARL.Actors
 	public int dex { get; protected set; }
 	public int inte { get; protected set; }
 	public int health { get; protected set; }
+	public int maxHealth { get; protected set; }
 	public bool alive { get => health > 0; }
 	public Vector2 position { get; set; }	
 	public Dictionary<string, Action> actions { get; protected set; }
@@ -40,8 +41,27 @@ namespace YARL.Actors
 	    str = _str;
 	    dex = _dex;
 	    health = _health;
+	    maxHealth = _health;
 	    actions = new Dictionary<string, Action>();
 	    ac_modifier = 0;
+	}
+
+	public override bool Equals(object o)
+	{
+	    if (o is Entity)
+	    {
+		var e = o as Entity;
+		if (e.name == name && e.position == position)
+		{
+		    return true;
+		}
+	    }
+	    return false;
+	}
+
+	public override int GetHashCode()
+	{
+	    return $"{name}{position.ToString()}".GetHashCode();
 	}
 
 	public void Inflict(int damage)
@@ -59,7 +79,17 @@ namespace YARL.Actors
 
 	public void RemoveAction(Action action)
 	{
-		actions.Remove(action.name);
+	    actions.Remove(action.name);
+	}
+
+	public void AddArmour(int ac)
+	{
+	    ac_modifier = ac;
+	}
+
+	public void RemoveArmour()
+	{
+	    ac_modifier = 0;
 	}
 
 	public void Move(Vector2 direction)

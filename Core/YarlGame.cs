@@ -19,6 +19,7 @@ namespace YARL.Core {
 	protected int Width;
 	bool inBattle { get => level.PlayerInRoomWithMonster(); }
 	bool ended;
+	bool showInventory;
 	Level level;
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
@@ -35,15 +36,13 @@ namespace YARL.Core {
 	    Width = w;
 	    itemFactory = new ItemFactory(new DefaultDraw());
 	    entityFactory = new EntityFactory(new DefaultDraw());
-	    level = new Level(w, h, 9, 15, 5, 1);
+	    level = new Level(w, h, 12, 15, 5, 1);
 	    player = entityFactory.CreatePlayer();
 	    player.position = level.Rooms[0].Center;
 	    inventoryManager = new InventoryManager(player);
 	    level.AddPlayer(player);
-	    level.AddEntity(entityFactory.CreateGoblin());
-	    Item sword = itemFactory.CreateShortSword();
-	    level.PutItem(sword, player.position + new Vector2(0, 1));
 	    ended = false;
+	    showInventory = false;
 	}
 
 	public void  SetConsoles(
@@ -57,23 +56,23 @@ namespace YARL.Core {
 
 	public void Update(string input)
 	{
+	    char key = input[0];
 	    if (player.alive)
 	    {
 		if (!inBattle)
 		{
-		    if (input[0] == 'k')
-			level.Move(player, new Vector2(0, -1));
-		    else if(input[0] == 'h')
-			level.Move(player, new Vector2(-1, 0));
-		    else if(input[0] == 'j')
-			level.Move(player, new Vector2(0, 1));
-		    else if(input[0] == 'l')
-			level.Move(player, new Vector2(1, 0));
-		    else if("era".Contains(input[0]))
-			inventoryManager.ProcessInput(input[0]);
-		    else if(input[0] == ',')
+		    if (level.choosingItem)
 		    {
-			level.PlayerPickItem();
+			level.ProcessInput(key);
+		    } else if (inventoryManager.selecting || "eru".Contains(key)) 
+		    {
+			inventoryManager.ProcessInput(key);
+		    } else if (key == 'i')
+		    {
+			showInventory = !showInventory;
+		    } else 
+		    {
+			level.ProcessInput(key);
 		    }
 		    if (inBattle)
 		    {
@@ -81,11 +80,17 @@ namespace YARL.Core {
 		    }
 		} else 
 		{
-		    battleManager.ProcessInput(input[0]);
+		    if (inventoryManager.selecting || "eru".Contains(key))
+		    {
+			inventoryManager.ProcessInput(key);
+		    } else
+		    {
+			battleManager.ProcessInput(key);	
+		    }
 		}
 	    } else 
 	    {
-		if ("qwertyuiopasdfghjklzxcvbnm".Contains(input[0]))
+		if ("qwertyuiopasdfghjklzxcvbnm".Contains(key))
 		{
 		    ended = true;
 		}
@@ -95,11 +100,16 @@ namespace YARL.Core {
 
 	public void Draw()
 	{
+	    Log.Information("Reached Draw");
 	    main.Clear();	
 	    side.Clear();
 	    bottom.Clear();
 	    level.UpdateView();
-	    if (!ended)
+	    Log.Information("Cleared conosles and updated the view");
+	    if (level.playerHasWon)
+	    {
+		main.Print(0, 5, "You have found the gem and killed all monsters. You have won!");
+	    } else if (!ended)
 	    {
 		for (int h = 0; h < Height; h++)
 		{
@@ -109,6 +119,7 @@ namespace YARL.Core {
 			main.Print(w, h, level[vector].Draw().ToString());
 		    }
 		}
+		Log.Information("Managed to print to main");
 		main.Print((int) player.position.X, (int) player.position.Y, player.Draw().ToString());
 		if (inBattle)
 		{
@@ -116,22 +127,49 @@ namespace YARL.Core {
 		    {
 			main.Print((int) m.position.X, (int) m.position.Y, m.Draw().ToString());
 		    }
-		    side.Print(0, 0, battleManager.DrawOnSide());
-		    bottom.Print(0, 0, battleManager.DrawOnBottom());
+		    if (inventoryManager.selecting)
+		    {
+			DrawListOnConsole(inventoryManager.DrawOnSide(), side);
+			DrawListOnConsole(inventoryManager.DrawOnBottom(), bottom);
+		    } else
+		    {
+			DrawListOnConsole(battleManager.DrawOnSide(), side);
+			DrawListOnConsole(battleManager.DrawOnBottom(), bottom);
+		    }
 		    if (battleManager.targeting)
 		    {
 			main.SetBackground(
 			    (int) battleManager.cursor.X, (int) battleManager.cursor.Y, Color.Yellow);
 		    }
-		} else
+		} else if (inventoryManager.selecting)
 		{
-		side.Print(0, 0, inventoryManager.Draw());
+		    DrawListOnConsole(inventoryManager.DrawOnSide(), side);
+		    DrawListOnConsole(inventoryManager.DrawOnBottom(), bottom);
+		} else if (level.choosingItem)
+		{
+		    DrawListOnConsole(level.DrawOnSide(), side);
+		    DrawListOnConsole(level.DrawOnBottom(), bottom);
+		} else if (showInventory)
+		{
+		    DrawListOnConsole(inventoryManager.DrawOnSide(), side);
 		}
 	    } else
 	    {
 		main.Print(0, 5, "You have died. You can quit the game by clicking on red x in the corner");
 	    }
-	    
+	    Log.Information("Finished Draw");
+	}
+
+	public void DrawListOnConsole(List<string> list, Console console)
+	{
+	    if (list is not null && list.Count != 0)
+	    {
+		console.Clear();
+		for(int i = 0; i < list.Count; i++)
+		{
+		    console.Print(0, i, list[i]);
+		}
+	    }
 	}
     }
 }

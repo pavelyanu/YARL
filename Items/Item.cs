@@ -56,9 +56,9 @@ namespace YARL.Items
 	    equipBehaviour.UnEquip(player);
 	}
 
-	public void Use(Player player)
+	public string Use(Player player)
 	{
-	    useBehaviour.Use(player);
+	    return useBehaviour.Use(player);
 	}
 
 	

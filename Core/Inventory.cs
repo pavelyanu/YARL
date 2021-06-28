@@ -11,7 +11,7 @@ namespace YARL.Core
 
         Dictionary<EquipmentType, Item> equipment;
 
-        Player player;
+        public Player player;
 
         public Inventory(Player p)
         {
@@ -72,22 +72,17 @@ namespace YARL.Core
 	    }
 	}
 
-
-        public Item Hands {
-            get => Hands;
-            set
-            {
-                if (Hands is null) Hands = value;
-            }
-        }
-
-        public Item Body {
-            get => Body;
-            set
-            {
-                if (Body is null) Body = value;
-            }
-        }
+	public string Use(Item item)
+	{
+	    if (items.ContainsKey(item.name))
+	    {
+		items.Remove(item.name);
+		return item.Use(player);
+	    } else 
+	    {
+		throw new ArgumentException($"there is on {item.name} in the inventory"); 
+	    }
+	}
 
         public List<Item> GetEquipable()
         {
