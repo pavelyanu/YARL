@@ -18,5 +18,8 @@ Controls:
 	Apply action: 'ENTER',
 	End turn: 'ESC'.
 	
-
-
+You can:
+    - Pick items on the ground (swords, armour, potions, etc.);
+    - Equip equipment (swords, armour, etc.);
+    - Unequip equiped items;
+    - Use usable items (potions, etc.).
