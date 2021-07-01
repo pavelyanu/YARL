@@ -15,7 +15,7 @@ namespace YARL
 	public const int Width = 100;
 	public const int Height = 40;
 	public const int InvWidth = 30;
-	public const int BatHight = 5;
+	public const int BatHeight = 5;
 	static YarlGame model;
 	static void Main(string[] args)
 	{
@@ -24,7 +24,7 @@ namespace YARL
 		.CreateLogger();
 	    Log.Information("Log start");
 
-	    SadConsole.Game.Create(Width + InvWidth, Height + BatHight);
+	    SadConsole.Game.Create(Width + InvWidth, Height + BatHeight);
 	    SadConsole.Game.OnInitialize = Init;
 	    SadConsole.Game.OnUpdate = Update;
 	    SadConsole.Game.Instance.Run();
@@ -67,7 +67,7 @@ namespace YARL
 	    bottom = new Console(InvWidth, Height);
 	    bottom.Position = new Point(Width, 0);
 	    bottom.Parent = main;
-	    side = new Console(Width, BatHight);
+	    side = new Console(Width, BatHeight);
 	    side.Position = new Point(0, Height);
 	    side.Fill(null, Color.Blue, null);
 	    side.Parent = main;

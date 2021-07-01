@@ -146,11 +146,12 @@ namespace YARL.Core
 			}
 		    }
 		    result.Add($"");
-		    result.Add($"Your health is - {inventory.player.health}");
+		    result.Add($"Health : {inventory.player.health}");
 		    return result;
 		case State.SelectingEquipment:
 		case State.SelectingEquipped:
 		case State.SelectingUsables:
+		    result.Add("Select an item");
 		    foreach(var item in chooseMap)
 		    {
 			result.Add($"{item.Key} - {item.Value.name}");

@@ -98,7 +98,7 @@ namespace YARL.Actors
 	    );
  	}
 
-	public Entity CreateOrk()
+	public Entity CreateOrc()
 	{
 	    var loot = new List<Item>();
 	    loot.Add(itemFactory.CreateLongSword());
@@ -106,7 +106,7 @@ namespace YARL.Actors
 		glyph: 'o',
 		drawBehaviour: drawBehaviour,
 		movement: 5,
-		name: "Ork",
+		name: "Orc",
 		str: 2,
 		dex: 0,
 		inte: -3,

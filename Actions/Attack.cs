@@ -33,13 +33,17 @@ namespace YARL.Actions
 	    sb = new StringBuilder();
 	    foreach (var target in targets)
 	    {
+		string have;
+		if (actor.name == "You")
+		    have = "have";
+		else have = "has";
 		if (Roller.Roll(20) + modifier > target.armor_class)
 		{
 		    int damage = Roller.Roll(dice, numberOfDice) + modifier * numberOfDice;
 		    target.Inflict(damage);
-		    sb.AppendLine($"{actor.name} have hit {target.name} and dealt {damage} damage");
+		    sb.AppendLine($"{actor.name} { have } hit {target.name} and dealt {damage} damage");
 		} else {
-		    sb.AppendLine($"{actor.name} have not managed to hit {target.name}");
+		    sb.AppendLine($"{actor.name} { have } missed you {target.name}");
 		}
 	    }
 	    return sb.ToString();

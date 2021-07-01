@@ -148,10 +148,10 @@ namespace YARL.Core
 			case '\r':
 			    if (!endingTurn)
 			    {
-				bottomMessage.Add("This will end your turn. Are you sure? Print y/n.");
+				bottomMessage.Add("This will end your turn. Are you sure? Enter y/n.");
 				endingTurn = true;
 			    } else {
-				bottomMessage.Add("This will end your turn. Are you sure? Print y/n.");
+				bottomMessage.Add("This will end your turn. Are you sure? Enter y/n.");
 			    }
 			    break;
 			case 'y':

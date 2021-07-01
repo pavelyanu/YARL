@@ -15,7 +15,6 @@ namespace YARL.Core
 	public int level { get; protected set; }
 	public List<Rectangle> Rooms { get => map.Rooms; }
 	Map map;
-	MapGenerator mapGenerator;
 	EntityFactory entityFactory;	
 	ItemFactory itemFactory;
 	List<Entity> entities;
@@ -39,7 +38,7 @@ namespace YARL.Core
 	    bottomMessage = "";
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
 	    chooseMap = new Dictionary<char, Item>();
-	    mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
+	    var mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
 	    entities = new List<Entity>();
 	    entityFactory = new EntityFactory(new DefaultDraw());
 	    itemFactory = new ItemFactory(new DefaultDraw());
@@ -158,7 +157,7 @@ namespace YARL.Core
 	    PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
 	    var lastRoom = Rooms[Rooms.Count - 1];
 	    PutItem(itemFactory.CreateGoalGem(), lastRoom.Center);
-	    var ork1 = entityFactory.CreateOrk();
+	    var ork1 = entityFactory.CreateOrc();
 	    ork1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
 	    AddEntity(ork1);
 	    var bowmen = entityFactory.CreateGoblinWithBow();
@@ -191,7 +190,7 @@ namespace YARL.Core
 			    AddEntity(bowmen);
 			    break;
 			case 5:
-			    var ork = entityFactory.CreateOrk();
+			    var ork = entityFactory.CreateOrc();
 			    ork.position = room.Center + new Vector2(Roller.Roll(3), i);
 			    AddEntity(ork);
 			    break;
