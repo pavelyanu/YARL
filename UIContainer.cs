@@ -1,9 +1,10 @@
 ﻿using System;
+using Vector2 = System.Numerics;
 using Microsoft.Xna.Framework;
 using SadConsole;
-using SadConsole.Controls;
+using YARL.Core;
 
-namespace SadConsoleRLTutorial.UI
+namespace YARL 
 {
     // Creates/Holds/Destroys all consoles used in the game
     // and makes consoles easily addressable from a central place.
@@ -17,7 +18,7 @@ namespace SadConsoleRLTutorial.UI
 	public ControlsConsole MiddleUpperConsole;
 	public ControlsConsole RightUpperConsole;
         public Window Window;
-        public SadConsole.Themes.Colors CustomColors;
+	public YarlGame model;
 
         public UIManager()
         {
@@ -92,8 +93,13 @@ namespace SadConsoleRLTutorial.UI
 	    );
         }
 
+	public void SetModel(YarlGame _model)
+	{
+	    model = _model;
+	}
+
         // centers the viewport camera on an Actor
-        public void CenterOnActor(Vector2 p)
+        public void CenterOnActor(System.Numerics.Vector2 p)
         {
             MainConsole.CenterViewPortOnPoint(new Point((int) p.X, (int) p.Y));
         }
@@ -108,7 +114,6 @@ namespace SadConsoleRLTutorial.UI
         // based on the button pressed.
         private void CheckKeyboard()
         {
-
             // As an example, we'll use the F5 key to make the game full screen
             if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5))
             {
@@ -119,47 +124,34 @@ namespace SadConsoleRLTutorial.UI
             // Decrement player's Y coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up))
             {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, -1));
-                CenterOnActor(GameLoop.World.Player);
+		model.Update("k");
+                CenterOnActor(model.level.GetPlayerPosition());
             }
 
             // Keyboard movement for Player character: Down arrow
             // Increment player's Y coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down))
             {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, 1));
-                CenterOnActor(GameLoop.World.Player);
+		model.Update("k");
+                CenterOnActor(model.level.GetPlayerPosition());
             }
 
             // Keyboard movement for Player character: Left arrow
             // Decrement player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left))
             {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(-1, 0));
-                CenterOnActor(GameLoop.World.Player);
+		model.Update("k");
+                CenterOnActor(model.level.GetPlayerPosition());
             }
 
             // Keyboard movement for Player character: Right arrow
             // Increment player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right))
             {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(1, 0));
-                CenterOnActor(GameLoop.World.Player);
+		model.Update("k");
+                CenterOnActor(model.level.GetPlayerPosition());
             }
 
-            // Undo last command: Z
-            if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Z))
-            {
-                GameLoop.CommandManager.UndoMoveActorBy();
-                CenterOnActor(GameLoop.World.Player);
-            }
-
-            // Repeat last command: X
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.X))
-            {
-                GameLoop.CommandManager.RedoMoveActorBy();
-                CenterOnActor(GameLoop.World.Player);
-            }
         }
 
 	private void SetControlsConsole(ControlsConsole console, int X, int Y, double WRatio, double HRatio) 

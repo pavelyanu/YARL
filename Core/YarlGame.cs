@@ -9,14 +9,14 @@ using YARL.Items;
 using Vector2 = System.Numerics.Vector2;
 
 namespace YARL.Core {
-    class YarlGame
+    public class YarlGame
     {
 	protected int Height;
 	protected int Width;
 	bool inBattle { get => level.PlayerInRoomWithMonster(); }
 	bool ended;
 	bool showInventory;
-	Level level;
+	public Level level;
 	InventoryManager inventoryManager;
 	BattleManager battleManager;
 	Player player;

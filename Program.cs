@@ -17,6 +17,7 @@ namespace YARL
 	public const int InvWidth = 30;
 	public const int BatHeight = 5;
 	static YarlGame model;
+	static UIManager manager;
 	static void Main(string[] args)
 	{
 	    Log.Logger = new LoggerConfiguration()
@@ -62,6 +63,8 @@ namespace YARL
 
 	private static void Init()
 	{
+	    manager = new UIManager();    
+	    manager.CreateWindow(Width, Height, "YARL");
 	    main = new Console(Width, Height);
 	    main.Position = new Point(0, 0);
 	    bottom = new Console(InvWidth, Height);
