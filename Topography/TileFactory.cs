@@ -16,6 +16,7 @@ namespace YARL.Topography
 		glyphs["floor"] = '.';
 		glyphs["wall"] = '#';
 		glyphs["door"] = '+';
+		glyphs["empty"] = (char) 0;
 		drawBehaviour = new DefaultDraw();
 	    }
 
@@ -58,12 +59,12 @@ namespace YARL.Topography
 
 	    public Tile Empty(Vector2 v)
 	    {
-		return Tile(v, false, ' ');
+		return Tile(v, false, glyphs["empty"]);
 	    }
 
 	    public Tile Empty(int x, int y)
 	    {
-		return Tile(new Vector2(x, y), false, ' ');
+		return Tile(new Vector2(x, y), false, glyphs["empty"]);
 	    }
 	}
 }

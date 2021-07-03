@@ -46,6 +46,7 @@ namespace YARL.Actions
 		    sb.AppendLine($"{actor.name} { have } missed you {target.name}");
 		}
 	    }
+	    sb.Remove(sb.Length - 1, 1);
 	    return sb.ToString();
 	}
     }

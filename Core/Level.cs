@@ -18,10 +18,10 @@ namespace YARL.Core
 	EntityFactory entityFactory;	
 	ItemFactory itemFactory;
 	List<Entity> entities;
+	GameLog gameLog;
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
 	Dictionary<char, Item> chooseMap;
 	Player player;
-	string bottomMessage;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
 	public bool playerInCorridor { get => currentRoom.IsEmpty; }
 	public bool standingOnItems { get => !(this[player.position].items is null ||
@@ -29,13 +29,15 @@ namespace YARL.Core
 	public bool choosingItem;
 	public bool playerHasWon { get => entities.Count == 0 && player.inventory.items.ContainsKey("Gem"); }
 
-	public Level(int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level)
+	public Level(
+	    int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level, GameLog _gameLog
+	)
 	{
 	    Width = w;
 	    Height = h;
 	    level = _level;
+	    gameLog = _gameLog;
 	    choosingItem = false;
-	    bottomMessage = "";
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
 	    chooseMap = new Dictionary<char, Item>();
 	    var mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
@@ -67,7 +69,7 @@ namespace YARL.Core
 	{
 	    if (entities.Count == 0)
 	    {
-		bottomMessage = "You have killed all the monsters. Now you have to find a gem";
+		WriteToLog("You have killed all the monsters. Now you have to find a gem");
 	    }
 	    bool result = false;
 	    if (choosingItem)
@@ -80,17 +82,13 @@ namespace YARL.Core
 		{
 		    PlayerPickItem(chooseMap[key].name);
 		    if (chooseMap[key].name == "Gem")
-			bottomMessage = "You have found the gem. Now you have to kill all the monsters!";
+			WriteToLog("You have found the gem. Now you have to kill all the monsters!");
 		    choosingItem = false;
 		} else 
 		{
-		    bottomMessage = "There is no such item there";
+		    WriteToLog("There is no such item there");
 		}
 		return result;
-	    }
-	    if ("hjkl".Contains(key))
-	    {
-		bottomMessage = "";
 	    }
 	    if (key == 'k')
 		result = Move(player, new Vector2(0, -1));
@@ -345,10 +343,32 @@ namespace YARL.Core
 	{
 	    return GetLine(origin, destination).Count;
 	}
+
+	public char[,] DrawOnMain()
+	{
+	    var result = new char[Width, Height];
+	    for(int x = 0; x < Width; x++)
+	    {
+		for(int y = 0; y < Height; y++)
+		{
+		    result[x, y] = this[x, y].Draw();
+		}
+	    }
+	    if(PlayerInRoomWithMonster())
+	    {
+		foreach(var monster in GetMonstersNearPlayer())
+		{
+		    result[(int) monster.position.X, (int) monster.position.Y] = monster.Draw();   
+		}
+	    }
+	    result[(int) GetPlayerPosition().X, (int) GetPlayerPosition().Y] = player.Draw();
+	    return result;
+ 	}
 	
 	public List<string> DrawOnSide()
 	{
 	    var result = new List<string>();
+	    result.Add("Pick an Item");
 	    foreach(var item in chooseMap)
 	    {
 		result.Add($"{item.Key} - {item.Value.name}");
@@ -356,11 +376,9 @@ namespace YARL.Core
 	    return result;
 	}
 
-	public List<string> DrawOnBottom()
+	private void WriteToLog(string message)
 	{
-	    var result = new List<string>();
-	    result.Add(bottomMessage);
-	    return result;
+	    gameLog.Add(message);
 	}
     }
 }

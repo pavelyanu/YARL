@@ -18,26 +18,25 @@ namespace YARL.Core
     {
 	Inventory inventory;
 	Dictionary<char, Item> chooseMap;
-	string bottomMessage;
 	State state;	
 	public bool selecting { get => 
 				state == State.SelectingEquipment ||
 				state == State.SelectingEquipped ||
 				state == State.SelectingUsables; }
+	GameLog gameLog;
 
-	public InventoryManager(Player p)
+	public InventoryManager(Player p, GameLog _gameLog)
 	{
 	    inventory = p.inventory;
-	    bottomMessage = "";
 	    state = State.Overview;
 	    chooseMap = null;
+	    gameLog = _gameLog;
 	}
 
 	public void ProcessInput(char key)
 	{
 	    if (state == State.Overview)
 	    {
-		bottomMessage = "";
 		switch (key)
 		{
 		    case 'e':
@@ -75,7 +74,7 @@ namespace YARL.Core
 			state = State.Overview;
 		    } else 
 		    {
-			bottomMessage = "There is not such item";
+			gameLog.Add("There is not such item");
 		    }
 		}
 	    } else if (state == State.SelectingEquipped)
@@ -91,7 +90,7 @@ namespace YARL.Core
 			state = State.Overview;
 		    } else
 		    {
-			bottomMessage = "There is not such item";
+			gameLog.Add("There is not such item");
 		    }
 		}
 	    } else if (state == State.SelectingUsables)
@@ -107,7 +106,7 @@ namespace YARL.Core
 			state = State.Overview;
 		    } else
 		    {
-			bottomMessage = "There is not such item";
+			gameLog.Add("There is not such item");
 		    }
 		}
 	    }
@@ -160,13 +159,6 @@ namespace YARL.Core
 		default:
 		    return null;
 	    }
-	}
-
-	public List<string> DrawOnBottom()
-	{
-	    var result = new List<string>();
-	    result.Add(bottomMessage);
-	    return result;
 	}
     }
 }

@@ -132,7 +132,7 @@ namespace YARL.Items
 	{
 	    return Create(
 		drawBehaviour: drawBehaviour,
-		glyph: '?',
+		glyph: '^',
 		name: "Gem",
 		equipable: false,
 		usable: false,

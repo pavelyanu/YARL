@@ -8,11 +8,12 @@ using YARL.Topography;
 
 namespace YARL.Core
 {
-    class BattleManager
+    public class BattleManager
     {
 	Level level;
 	Rectangle room;
 	Player player;
+	GameLog gameLog;
 	public Vector2 cursor;	
 	List<Entity> initiative;
 	int movement_left;
@@ -20,20 +21,18 @@ namespace YARL.Core
 	public bool targeting;
 	Action chosen_action;
 	List<Entity> targets;
-	List<string> bottomMessage;
-	string sideMessage;
 	bool endingTurn;
 
-	public BattleManager(Level _level, Player _player)
+	public BattleManager(Level _level, Player _player, GameLog _gameLog)
 	{
 	    level = _level;
 	    player = _player;
+	    gameLog = _gameLog;
 	    room = level.currentRoom;
 	    cursor = new Vector2(player.position.X, player.position.Y);
 	    initiative = new List<Entity>();
 	    initiative.AddRange(level.GetMonstersNearPlayer());
 	    initiative.Add(player);
-	    bottomMessage = new List<string>();
 	    targeting = false;
 	    endingTurn = false;
 	    StartTurn();
@@ -61,7 +60,6 @@ namespace YARL.Core
 	    {
 		if ("jkhl\n\r".Contains(key))
 		{
-		    bottomMessage.Clear();
 		    Vector2 dir = new Vector2(0, 0);
 		    switch (key)
 		    {
@@ -109,9 +107,8 @@ namespace YARL.Core
 		}
 	    } else
 	    {
-		if ("jkhlny1234567890\r".Contains(key))
+		if ("jkhlny1234567890 \r".Contains(key))
 		{
-		    bottomMessage.Clear();
 		    Vector2 dir;
 		    switch (key)
 		    {
@@ -145,13 +142,13 @@ namespace YARL.Core
 				Log.Information("Player may not make an aciton");
 			    }
 			    break;
-			case '\r':
+			case ' ':
 			    if (!endingTurn)
 			    {
-				bottomMessage.Add("This will end your turn. Are you sure? Enter y/n.");
+				gameLog.Add("This will end your turn. Are you sure? Enter y/n.");
 				endingTurn = true;
 			    } else {
-				bottomMessage.Add("This will end your turn. Are you sure? Enter y/n.");
+				gameLog.Add("This will end your turn. Are you sure? Enter y/n.");
 			    }
 			    break;
 			case 'y':
@@ -187,17 +184,21 @@ namespace YARL.Core
 			    if (level.GetDistance(result, monster.position) == 3 &&
 				level.GetDistance(previous, monster.position) == 2)
 			    {
-				bottomMessage.Add($"{monster.name} tries to hit you as you run");
+				gameLog.Add($"{monster.name} tries to hit you as you run");
 				var action = monster.MakeMove(level).Item2;
 				if (action.range == 1)
 				{
 				    var targets = new List<Entity>();
 				    targets.Add(player);
-				    bottomMessage.Add($"{action.Do(targets, monster)}");
+				    gameLog.Add($"{action.Do(targets, monster)}");
 				}
 			    }
 			}
 			movement_left -= 1;
+			if (!player.alive)
+			{
+			    gameLog.Add("Player has died!");
+			}
 		    }
 		}
 	    }
@@ -223,17 +224,14 @@ namespace YARL.Core
 
 	public void ProcessPlayerAction(Player player, Action action, List<Entity> targets)
 	{
-	    bottomMessage.Add(action.Do(targets, player));
-	    foreach(var bm in bottomMessage)
-	    {
-		Log.Information(bm);
-	    }
+	    gameLog.Add(action.Do(targets, player));
 	    foreach (var target in targets)
 	    {
 		Log.Information($"{target.name}'s health is {target.health}");
 		if (!target.alive && target is Monster)
 		{
 		    Log.Information($"{target.name} is dead");
+		    gameLog.Add($"You have killed {target.name}");
 		    var monster = target as Monster;
 		    var loot = monster.GetLoot();
 		    if (loot.Count != 0)
@@ -268,12 +266,12 @@ namespace YARL.Core
 		Log.Information("The monster is close enough for a strike");
 		var targets = new List<Entity>();
 		targets.Add(player);
-		bottomMessage.Add(action.Do(targets, monster));
+		gameLog.Add(action.Do(targets, monster));
 	    } else Log.Information("The monster is not close enough for a strice");
 	    Log.Information("Finished Processing the action");
 	    if (!player.alive)
 	    {
-		sideMessage = "You have died";
+		gameLog.Add("Player has died!");
 	    }
 	}
 
@@ -311,39 +309,26 @@ namespace YARL.Core
 	public List<string> DrawOnSide()
 	{
 	    var result = new List<string>();
-	    if (sideMessage is null || sideMessage == "")
+	    int count = 1;
+	    foreach(var action in player.actions.Keys)
 	    {
-		int count = 1;
-		foreach(var action in player.actions.Keys)
-		{
-		    result.Add($"{count++} - {action}");
-		}
-		return result;
-	    } else
-	    {
-		result.Add(sideMessage);
-		return result;
+		result.Add($"{count++} - {action}");
 	    }
+	    return result;
 	}
 
-	public List<string> DrawOnBottom()
+	public List<string> DrawPlayerInfo()
 	{
 	    var result = new List<string>();
-	    if (bottomMessage is null || bottomMessage.Count == 0)
+	    result.Add($"movement : {movement_left}");
+	    result.Add($"actions : {action_left}");
+	    result.Add($"target mode ^ {targeting}");
+	    if (targeting)
 	    {
-		result.Add($"movement - {movement_left}, actions - {action_left}, target mode - {targeting}");
-		result.Add($"Your current health is: {player.health}");
-		if (targeting)
-		{
-		    var distance = (cursor - player.position).Length();
-		    result.Add($"the distance to target is {distance}");
-		}
-		return result;
-	    } else
-	    {
-		result = bottomMessage;
-		return result;
+		var distance = (cursor - player.position).Length();
+		result.Add($"the distance to target is {distance}");
 	    }
+	    return result;
 	}
     }
 }

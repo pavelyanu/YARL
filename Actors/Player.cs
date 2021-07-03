@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YARL.Core;
 using YARL.Drawing;
 
@@ -27,6 +28,23 @@ namespace YARL.Actors
 	public void ModifyAC(int i)
 	{
 	    ac_modifier += i;
+	}
+
+	public List<string> DrawStats()
+	{
+	    var result = new List<string>();
+	    result.Add($"str. : {str}");
+	    result.Add($"dex. : {dex}");
+	    result.Add($"int. : {inte}");
+	    return result;
+	}
+
+	public List<string> DrawInfo()
+	{
+	    var result = new List<string>();
+	    result.Add($"health : {health}");
+	    result.Add($"ac. : {armor_class}");
+	    return result;
 	}
     }
 }
