@@ -46,18 +46,8 @@ namespace YARL.Actors
 	    ac_modifier = 0;
 	}
 
-	public override bool Equals(object o)
-	{
-	    if (o is Entity)
-	    {
-		var e = o as Entity;
-		if (e.name == name && e.position == position)
-		{
-		    return true;
-		}
-	    }
-	    return false;
-	}
+	public override bool Equals(object o) =>
+	        o is Entity e && e.name == name && e.position == position;
 
 	public override int GetHashCode()
 	{
