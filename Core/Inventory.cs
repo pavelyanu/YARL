@@ -24,15 +24,19 @@ namespace YARL.Core
         {
             if (!items.ContainsKey(item.name))
                 throw new ArgumentException($"{item.name} is not in the inventory");
+	    if (!item.equipable)
+                throw new ArgumentException($"{item.name} is not equipable");
             if (!equipment.ContainsKey(item.equipmentType) || equipment[item.equipmentType] is null)
             {
-                if (!item.equipable)
-                    throw new ArgumentException($"{item.name} is not equipable");
                 equipment[item.equipmentType] = item;
                 Remove(item);
                 item.Equip(player);
+            } else if (equipment.ContainsKey(item.equipmentType))
+	    {
+		UnEquip(item.equipmentType);
 		equipment[item.equipmentType] = item;
-            }
+		item.Equip(player);
+	    }
         }
 
         public void UnEquip(EquipmentType equipmentType)

@@ -161,19 +161,35 @@ namespace YARL
                 SadConsole.Settings.ToggleFullScreen();
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Up))
             {
-		model.Update("k");
+		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		{
+		    model.Update("K");
+		}else model.Update("k");
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Down))
             {
-		model.Update("j");
+		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		{
+		    model.Update("J");
+		}else model.Update("j");
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Left))
             {
-		model.Update("h");
+		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		{
+		    model.Update("H");
+		}else model.Update("h");
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Right))
             {
-		model.Update("l");
+		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		{
+		    model.Update("L");
+		}else model.Update("l");
                 CenterOnActor(model.level.GetPlayerPosition());
             } else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Enter))
 	    {
@@ -186,7 +202,12 @@ namespace YARL
 		var keys = SadConsole.Global.KeyboardState.KeysPressed;
 		if (keys.Count != 0)
 		{
-		    model.Update(keys[0].Character.ToString());
+		    if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
+			SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		    {
+			
+		    model.Update(keys[0].Character.ToString().ToUpper());
+		    } else model.Update(keys[0].Character.ToString());
 		    CenterOnActor(model.level.GetPlayerPosition());
 		}
 	    }

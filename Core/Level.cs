@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Serilog;
 using YARL.Topography;
 using YARL.Actors;
 using YARL.Items;
@@ -89,24 +90,42 @@ namespace YARL.Core
 		    WriteToLog("There is no such item there");
 		}
 		return result;
-	    }
-	    if (key == 'k')
-		result = Move(player, new Vector2(0, -1));
-	    else if (key == 'h')
-		result = Move(player, new Vector2(-1, 0));
-	    else if (key == 'j')
-		result = Move(player, new Vector2(0, 1));
-	    else if (key == 'l')
-		result = Move(player, new Vector2(1, 0));
-	    else if (key ==',')
+	    } else
 	    {
-		if (standingOnItems)
+		if (key == 'k')
+		    result = Move(player, new Vector2(0, -1));
+		else if (key == 'h')
+		    result = Move(player, new Vector2(-1, 0));
+		else if (key == 'j')
+		    result = Move(player, new Vector2(0, 1));
+		else if (key == 'l')
+		    result = Move(player, new Vector2(1, 0));
+		else if (key ==',')
 		{
-		    chooseMap = GetChooseMap(this[player.position].items);
-		    choosingItem = true;
+		    if (standingOnItems)
+		    {
+			chooseMap = GetChooseMap(this[player.position].items);
+			choosingItem = true;
+		    }
+		} else if (playerInCorridor || GetMonstersNearPlayer().Count == 0)
+		{
+		    Log.Information("Entering shift key switch");
+		    if ("HJKL".Contains(key))
+		    {
+			Log.Information($"Key {key} is found");
+			key = (char) ((int) key + 32);
+			Log.Information($"Key was transformed to {key}");
+			result = true;
+			while(GetMonstersNearPlayer().Count == 0)
+			{
+			    if (!ProcessInput(key))
+				break;
+			    UpdateView();
+			}
+		    }
 		}
+		return result;
 	    }
-	    return result;
 	}
 
 	Dictionary<char, Item> GetChooseMap(List<Item> items)
@@ -312,10 +331,13 @@ namespace YARL.Core
 	public List<Monster> GetMonstersNearPlayer()
 	{
 	    var result = new List<Monster>();
-	    foreach (var entity in roomPopulation[currentRoom])
+	    if (roomPopulation.ContainsKey(currentRoom))
 	    {
-		if (entity is Monster)
-		    result.Add(entity as Monster);
+		foreach (var entity in roomPopulation[currentRoom])
+		{
+		    if (entity is Monster)
+			result.Add(entity as Monster);
+		}
 	    }
 	    return result;
 	}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Environment = System.Environment;
 using SadConsole;
 using YARL.Actors;
 using YARL.Drawing;
@@ -40,6 +41,10 @@ namespace YARL.Core {
 	public void Update(string input)
 	{
 	    char key = input[0];
+	    if (key == 'Q')
+	    {
+		Environment.Exit(0);
+	    }
 	    if (player.alive)
 	    {
 		if (!inBattle)
