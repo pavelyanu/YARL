@@ -35,6 +35,7 @@ namespace YARL.Core
 	    {
 		UnEquip(item.equipmentType);
 		equipment[item.equipmentType] = item;
+                Remove(item);
 		item.Equip(player);
 	    }
         }

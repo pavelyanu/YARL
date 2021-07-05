@@ -21,5 +21,25 @@ namespace YARL.Core
 	{
 	    return Roll(dice, 1);
 	}
+
+	public static int RollWithAdvantage(int dice)
+	{
+	    return Math.Max(Roll(dice), Roll(dice));
+	}
+
+	public static int RollWithDisadvantage(int dice)
+	{
+	    return Math.Min(Roll(dice), Roll(dice));
+	}
+
+	public static int RollWithModification(int dice, int modification)
+	{
+	    int roll = Roll(dice);
+	    if (modification == -1)
+		return Math.Min(Roll(dice), roll);
+	    else if (modification == 1)
+		return Math.Max(Roll(dice), roll);
+	    return roll;
+	}
     }
 }

@@ -20,7 +20,7 @@ namespace YARL.Actions
 	public bool dex_based { get; set; }
 	public bool inte_based { get; set; }
 
-	public override string Do(List<Entity> targets, Entity actor)
+	public override string Do(List<Entity> targets, Entity actor, int modification)
 	{
 	    int modifier = 0;
 	    if (str_based)
@@ -37,7 +37,8 @@ namespace YARL.Actions
 		if (actor.name == "You")
 		    have = "have";
 		else have = "has";
-		if (Roller.Roll(20) + modifier > target.armor_class)
+		int roll = Roller.RollWithModification(20, modification);
+		if (roll + modifier > target.armor_class)
 		{
 		    int damage = Roller.Roll(dice, numberOfDice) + modifier * numberOfDice;
 		    target.Inflict(damage);

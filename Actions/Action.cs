@@ -10,7 +10,7 @@ namespace YARL.Actions
 	public abstract int numOfTargets { get; set; }
 	public abstract string name { get; set; }
 	public abstract int range { get; set; }
-	public abstract string Do(List<Entity> targets, Entity actor);
+	public abstract string Do(List<Entity> targets, Entity actor, int modification);
 
 	public override bool Equals(object obj)
 	{
