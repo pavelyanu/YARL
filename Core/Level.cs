@@ -27,6 +27,7 @@ namespace YARL.Core
 	public bool playerInCorridor { get => currentRoom.IsEmpty; }
 	public bool standingOnItems { get => !(this[player.position].items is null ||
 					    this[player.position].items.Count == 0); }
+	public bool printedPreFinal;
 	public bool choosingItem;
 	public bool playerHasWon { get => entities.Count == 0 && player.inventory.items.ContainsKey("Gem"); }
 
@@ -39,6 +40,7 @@ namespace YARL.Core
 	    level = _level;
 	    gameLog = _gameLog;
 	    choosingItem = false;
+	    printedPreFinal = false;
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
 	    chooseMap = new Dictionary<char, Item>();
 	    var mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
@@ -68,9 +70,10 @@ namespace YARL.Core
 
 	public bool ProcessInput(char key)
 	{
-	    if (entities.Count == 0)
+	    if (entities.Count == 0 && !printedPreFinal)
 	    {
 		WriteToLog("You have killed all the monsters. Now you have to find a gem");
+		printedPreFinal = true;
 	    }
 	    bool result = false;
 	    if (choosingItem)
@@ -363,7 +366,7 @@ namespace YARL.Core
 
 	public int GetDistance(Vector2 origin, Vector2 destination)
 	{
-	    return GetLine(origin, destination).Count;
+	    return GetLine(origin, destination).Count - 1;
 	}
 
 	public char[,] DrawOnMain()

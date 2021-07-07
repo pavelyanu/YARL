@@ -11,7 +11,7 @@ namespace YARL.Items
 	public ItemFactory(IDrawBehaviour _drawBehaviour)
 	{
 	    drawBehaviour = _drawBehaviour;
-	    actionFactory = new ActionFactory();
+	    actionFactory = new ActionFactory(this);
 	}
 
 	public Item Create(
@@ -111,6 +111,23 @@ namespace YARL.Items
 	    );
 	}
 
+	public Item CreateArrow()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '/',
+		name: "Arrow",
+		equipable: false,
+		usable: false,
+		amount: 10,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.None,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new DoNothing(),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
 	public Item CreateLightArmour()
 	{
 	    return Create(
@@ -123,7 +140,7 @@ namespace YARL.Items
 		possessionType: PossessionType.Armor,
 		equipmentType: EquipmentType.Body,
 		pickBehaviour: new AddItemBehaviour(),
-		equipBehaviour: new ArmourBehaviour(1),
+		equipBehaviour: new ArmourBehaviour(1, -1),
 		useBehaviour: new DoNothing()
 	    );
 	}

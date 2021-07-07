@@ -1,19 +1,16 @@
 using System;
 using System.Collections.Generic;
 using YARL.Items;
-using YARL.Actors;
 
-namespace YARL.Core
+namespace YARL.Actors
 {
-    public class Inventory
+    public class PlayerInventory : Inventory
     {
-        public Dictionary<string, Item> items;	
-
         Dictionary<EquipmentType, Item> equipment;
 
         public Player player;
 
-        public Inventory(Player p)
+        public PlayerInventory(Player p)
         {
             items = new Dictionary<string, Item>();
             equipment = new Dictionary<EquipmentType, Item>();
@@ -48,35 +45,9 @@ namespace YARL.Core
             Item item = equipment[equipmentType];
             equipment.Remove(equipmentType);
             item.UnEquip(player);
+	    item.amount++;
             Add(item);
         }
-
-	public void Add(Item item)
-	{
-	    if (items.ContainsKey(item.name))
-	    {
-		items[item.name].amount++;
-	    }else
-	    {
-		items[item.name] = item;
-		item.amount = 1;
-	    }
-	}
-
-	public void Remove(Item item)
-	{
-	    if (items.ContainsKey(item.name))
-	    {
-		items[item.name].amount--;
-		if (items[item.name].amount <= 0)
-		{
-		    items.Remove(item.name);
-		}
-	    } else 
-	    {
-		throw new ArgumentException($"there is on {item.name} in the inventory"); 
-	    }
-	}
 
 	public string Use(Item item)
 	{

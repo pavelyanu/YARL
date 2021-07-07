@@ -16,7 +16,7 @@ namespace YARL.Core
 
     class InventoryManager
     {
-	Inventory inventory;
+	PlayerInventory inventory;
 	Dictionary<char, Item> chooseMap;
 	State state;	
 	public bool selecting { get => 
@@ -27,7 +27,7 @@ namespace YARL.Core
 
 	public InventoryManager(Player p, GameLog _gameLog)
 	{
-	    inventory = p.inventory;
+	    inventory = p.inventory as PlayerInventory;
 	    state = State.Overview;
 	    chooseMap = null;
 	    gameLog = _gameLog;

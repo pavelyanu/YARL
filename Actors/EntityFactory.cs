@@ -16,7 +16,7 @@ namespace YARL.Actors
 	{
 	    drawBehaviour = _drawBehaviour;
 	    itemFactory = new ItemFactory(drawBehaviour);
-	    actionFactory = new ActionFactory();
+	    actionFactory = new ActionFactory(itemFactory);
 	}
 
 	public Entity CreateMonster(
@@ -52,9 +52,9 @@ namespace YARL.Actors
 	{
 	    return new Player(
 		_drawBehaviour: drawBehaviour,
-		_str: 2,
-		_dex: 2,
-		_inte: 2,
+		_str: 0,
+		_dex: 0,
+		_inte: 0,
 		_health: 8
 	    );
 	}
@@ -82,8 +82,9 @@ namespace YARL.Actors
 	public Entity CreateGoblinWithBow()
 	{
 	    var loot = new List<Item>();
-	    loot.Add(itemFactory.CreateLightArmour());
-	    return CreateMonster(
+	    loot.Add(itemFactory.CreateArrow());
+	    loot.Add(itemFactory.CreateBow());
+	    var goblin =  CreateMonster(
 		glyph: 'b',
 		drawBehaviour: drawBehaviour,
 		movement: 5,
@@ -96,6 +97,8 @@ namespace YARL.Actors
 		lootChance: 0.7,
 		action: actionFactory.CreateBowAttack()
 	    );
+	    goblin.inventory.Add(itemFactory.CreateArrow());
+	    return goblin;
  	}
 
 	public Entity CreateOrc()

@@ -30,8 +30,8 @@ namespace YARL.Actors
 	    loot = _loot;
 	    lootChance = _lootchance;
 	    actions.Add(_action.name, _action);
-	}
-
+	    inventory = new MonsterInventory();
+	} 
 	public (List<Vector2>, Action) MakeMove(Level level)
 	{
 	    Log.Information($"Starting to plan the move");

@@ -49,14 +49,15 @@ namespace YARL.Items
     public class ArmourBehaviour : IEquipBehaviour
     {
 	int ac;
-	public ArmourBehaviour(int _ac)
+	int cap;
+	public ArmourBehaviour(int _ac, int _cap)
 	{
 	    ac = _ac;
 	}
 
 	public void Equip(Player player)
 	{
-	    player.AddArmour(ac);
+	    player.AddArmour(ac, cap);
 	}
 
 	public void UnEquip(Player player)

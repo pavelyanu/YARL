@@ -181,8 +181,8 @@ namespace YARL.Core
 		    {
 			foreach(var monster in GetMonsters())
 			{
-			    if (level.GetDistance(result, monster.position) == 3 &&
-				level.GetDistance(previous, monster.position) == 2)
+			    if (level.GetDistance(result, monster.position) == 2 &&
+				level.GetDistance(previous, monster.position) == 1)
 			    {
 				gameLog.Add($"{monster.name} tries to hit you as you run");
 				var action = monster.MakeMove(level).Item2;
@@ -190,7 +190,7 @@ namespace YARL.Core
 				{
 				    var targets = new List<Entity>();
 				    targets.Add(player);
-				    gameLog.Add($"{action.Do(targets, monster)}");
+				    gameLog.Add($"{action.Do(targets, monster, level)}");
 				}
 			    }
 			}
@@ -224,7 +224,7 @@ namespace YARL.Core
 
 	public void ProcessPlayerAction(Player player, Action action, List<Entity> targets)
 	{
-	    gameLog.Add(action.Do(targets, player));
+	    gameLog.Add(action.Do(targets, player, level));
 	    foreach (var target in targets)
 	    {
 		Log.Information($"{target.name}'s health is {target.health}");
@@ -259,14 +259,14 @@ namespace YARL.Core
 		ProcessMonsterMovement(monster, vector);
 	    }
 	    Log.Information($"Action to be attempet is {action.name}");
-	    int distance = level.GetDistance(player.position, monster.position) - 1;
+	    int distance = level.GetDistance(player.position, monster.position);
 	    Log.Information($"The between player and monster is {distance}");
 	    if (distance <= action.range && action is not null)
 	    {
 		Log.Information("The monster is close enough for a strike");
 		var targets = new List<Entity>();
 		targets.Add(player);
-		gameLog.Add(action.Do(targets, monster));
+		gameLog.Add(action.Do(targets, monster, level));
 	    } else Log.Information("The monster is not close enough for a strice");
 	    Log.Information("Finished Processing the action");
 	    if (!player.alive)

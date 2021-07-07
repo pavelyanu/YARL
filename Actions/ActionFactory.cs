@@ -1,7 +1,17 @@
+using YARL.Items;
+using YARL.Drawing;
+
 namespace YARL.Actions
 {
     class ActionFactory
     {
+
+	ItemFactory itemFactory;
+
+	public ActionFactory(ItemFactory _itemFactory)
+	{
+	    itemFactory = _itemFactory;
+	}
 
 	public Action CreateAttack(
 	    int cost,
@@ -12,19 +22,23 @@ namespace YARL.Actions
 	    bool dex_based,
 	    bool inte_based,
 	    int dice,
-	    int numberOfDice
+	    int numberOfDice,
+	    Item uses
 	)
 	{
-	    var attack = new Attack();
-	    attack.cost = cost;
-	    attack.numOfTargets = numOfTargets;
-	    attack.name = name;
-	    attack.range = range;
-	    attack.str_based = str_based;
-	    attack.dex_based = dex_based;
-	    attack.inte_based = inte_based;
-	    attack.dice = dice;
-	    attack.numberOfDice = numberOfDice;
+	    var attack = new Attack
+	    (
+	    _cost: cost,
+	    _numOfTargets: numOfTargets,
+	    _name: name,
+	    _range: range,
+	    _str_based: str_based,
+	    _dex_based: dex_based,
+	    _inte_based: inte_based,
+	    _dice: dice,
+	    _numberOfDice: numberOfDice,
+	    _uses: uses
+	    );
 	    return attack;
 	}
 
@@ -39,7 +53,8 @@ namespace YARL.Actions
 		dex_based: true,
 		inte_based: false,
 		dice: 4,
-		numberOfDice: 1
+		numberOfDice: 1,
+		uses: null
 	    );
 	}
 
@@ -54,7 +69,8 @@ namespace YARL.Actions
 		dex_based: false,
 		inte_based: false,
 		dice: 6,
-		numberOfDice: 1
+		numberOfDice: 1,
+		uses: null
 	    );
 	}
 
@@ -69,7 +85,8 @@ namespace YARL.Actions
 		dex_based: false,
 		inte_based: false,
 		dice: 8,
-		numberOfDice: 1
+		numberOfDice: 1,
+		uses: null
 	    );
 	}
 
@@ -84,7 +101,8 @@ namespace YARL.Actions
 		dex_based: true,
 		inte_based: false,
 		dice: 6,
-		numberOfDice: 1
+		numberOfDice: 1,
+		uses: itemFactory.CreateArrow()
 	    );
 	}
     }

@@ -11,7 +11,8 @@ namespace YARL.Actors
 	public IDrawBehaviour drawBehaviour { get; set; }
 
 	public int movement { get; protected set; }
-	public int armor_class { get => 10 + dex + ac_modifier; }
+	public int armor_class { get => 10 + GetCappedDex() + ac_modifier; }
+	public int dex_ac_cap { get; protected set; }
 	public int ac_modifier { get; protected set; }
 	public string name { get; protected set; }
 	public int str { get; protected set; }
@@ -22,6 +23,7 @@ namespace YARL.Actors
 	public bool alive { get => health > 0; }
 	public Vector2 position { get; set; }	
 	public Dictionary<string, Action> actions { get; protected set; }
+	public Inventory inventory;
 
 	public Entity(
 	    char _glyph,
@@ -72,14 +74,26 @@ namespace YARL.Actors
 	    actions.Remove(action.name);
 	}
 
-	public void AddArmour(int ac)
+	public void AddArmour(int ac, int dex_cap)
 	{
 	    ac_modifier = ac;
+	    dex_ac_cap = dex_cap;
 	}
 
 	public void RemoveArmour()
 	{
 	    ac_modifier = 0;
+	}
+
+	int GetCappedDex()
+	{
+	    if (dex_ac_cap > 0)
+	    {
+		if (dex > dex_ac_cap)
+		{
+		    return dex_ac_cap;
+		} else return dex;
+	    } else return dex;
 	}
 
 	public void Move(Vector2 direction)

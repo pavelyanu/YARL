@@ -3,7 +3,6 @@ using Environment = System.Environment;
 using SadConsole;
 using YARL.Actors;
 using YARL.Drawing;
-using YARL.Items;
 
 namespace YARL.Core {
     public class YarlGame
@@ -18,7 +17,6 @@ namespace YARL.Core {
 	InventoryManager inventoryManager;
 	public BattleManager battleManager;
 	Player player;
-	ItemFactory itemFactory;
 	EntityFactory entityFactory;
 	GameLog gameLog;
 
@@ -27,7 +25,6 @@ namespace YARL.Core {
 	    Height = h;
 	    Width = w;
 	    gameLog = new GameLog(logSize - 3);
-	    itemFactory = new ItemFactory(new DefaultDraw());
 	    entityFactory = new EntityFactory(new DefaultDraw());
 	    level = new Level(w, h, 12, 15, 5, 1, gameLog);
 	    player = entityFactory.CreatePlayer();
@@ -71,7 +68,7 @@ namespace YARL.Core {
 		    if (inventoryManager.selecting || "eru".Contains(key))
 		    {
 			inventoryManager.ProcessInput(key);
-		    } else if (key == 'i')
+		    } else if (key == ',')
 		    {
 			level.ProcessInput(key);
 		    } else
