@@ -15,6 +15,7 @@ namespace YARL.Core {
 	bool showInventory;
 	public Level level;
 	InventoryManager inventoryManager;
+	CharacterManager characterManager;
 	public BattleManager battleManager;
 	Player player;
 	EntityFactory entityFactory;
@@ -26,13 +27,17 @@ namespace YARL.Core {
 	    Width = w;
 	    gameLog = new GameLog(logSize - 3);
 	    entityFactory = new EntityFactory(new DefaultDraw());
-	    level = new Level(w, h, 12, 15, 5, 1, gameLog);
 	    player = entityFactory.CreatePlayer();
-	    player.position = level.Rooms[0].Center;
+	    player.levelTransfer += OnLevelTransfer;
+	    level = new Level(w, h, 12, 15, 5, 1, gameLog, player);
 	    inventoryManager = new InventoryManager(player, gameLog);
-	    level.AddPlayer(player);
+	    characterManager = new CharacterManager(player, gameLog);
 	    ended = false;
 	    showInventory = true;
+	    if (inBattle)
+	    {
+		battleManager = new BattleManager(level,player, gameLog);
+	    }
 	}
 
 	public void Update(string input)
@@ -46,7 +51,10 @@ namespace YARL.Core {
 	    {
 		if (!inBattle)
 		{
-		    if (level.choosingItem)
+		    if (characterManager.leveling)
+		    {
+			characterManager.ProcessInput(key);
+		    } else if (level.choosingItem)
 		    {
 			level.ProcessInput(key);
 		    } else if (inventoryManager.selecting || "eru".Contains(key)) 
@@ -84,7 +92,11 @@ namespace YARL.Core {
 		}
 	    }
 	    level.UpdateView();
-	    
+	}
+
+	public void OnLevelTransfer()
+	{
+	    level = new Level(Width, Height, 12, 15, 5, 2, gameLog, player);
 	}
 
 	public char[,] DrawOnMain()
@@ -100,6 +112,11 @@ namespace YARL.Core {
 	    } else if (level.choosingItem)
 	    {
 		return level.DrawOnSide();
+	    } else if (characterManager.leveling)
+	    {
+		var result = characterManager.Draw();
+		result[characterManager.selectedLine] = result[characterManager.selectedLine].ToUpper();
+		return result;
 	    }
 	    else return new List<string>();
 	}

@@ -28,7 +28,7 @@ namespace YARL.Actors
 	    int dex,
 	    int inte,
 	    int health,
-	    List<Item> loot,
+	    int exp,
 	    double lootChance,
 	    Action action
 	)
@@ -42,7 +42,7 @@ namespace YARL.Actors
 		_dex: dex,
 		_inte: inte,
 		_health: health,
-		_loot: loot,
+		_exp: exp,
 		_lootchance: lootChance,
 		_action: action
 	    );
@@ -61,10 +61,7 @@ namespace YARL.Actors
 
 	public Entity CreateGoblin()
 	{
-	    var loot = new List<Item>();
-	    loot.Add(itemFactory.CreateShortSword());
-	    loot.Add(itemFactory.CreateLightArmour());
-	    return CreateMonster(
+	    var goblin =  CreateMonster(
 		glyph: 'g',
 		drawBehaviour: drawBehaviour,
 		movement: 5,
@@ -73,17 +70,17 @@ namespace YARL.Actors
 		dex: 0,
 		inte: -3,
 		health: 5,
-		loot: loot,
+		exp: 5,
 		lootChance: 0.7,
 		action: actionFactory.CreateShortSwordAttack()
 	    );
+	    goblin.inventory.Add(itemFactory.CreateShortSword());
+	    goblin.inventory.Add(itemFactory.CreateLightArmor());
+	    return goblin;
  	}
 
 	public Entity CreateGoblinWithBow()
 	{
-	    var loot = new List<Item>();
-	    loot.Add(itemFactory.CreateArrow());
-	    loot.Add(itemFactory.CreateBow());
 	    var goblin =  CreateMonster(
 		glyph: 'b',
 		drawBehaviour: drawBehaviour,
@@ -93,19 +90,18 @@ namespace YARL.Actors
 		dex: 1,
 		inte: -3,
 		health: 4,
-		loot: loot,
+		exp: 5,
 		lootChance: 0.7,
 		action: actionFactory.CreateBowAttack()
 	    );
+	    goblin.inventory.Add(itemFactory.CreateBow());
 	    goblin.inventory.Add(itemFactory.CreateArrow());
 	    return goblin;
  	}
 
 	public Entity CreateOrc()
 	{
-	    var loot = new List<Item>();
-	    loot.Add(itemFactory.CreateLongSword());
-	    return CreateMonster(
+	    var orc =  CreateMonster(
 		glyph: 'o',
 		drawBehaviour: drawBehaviour,
 		movement: 5,
@@ -113,11 +109,70 @@ namespace YARL.Actors
 		str: 2,
 		dex: 0,
 		inte: -3,
-		health: 4,
-		loot: loot,
-		lootChance: 0.9,
+		health: 8,
+		exp: 5,
+		lootChance: 1,
 		action: actionFactory.CreateLongSwordAttack()
 	    );
+	    orc.inventory.Add(itemFactory.CreateLongSword());
+	    return orc;
  	}
+
+	public Entity CreateZombie()
+	{
+	    var zombie =  CreateMonster(
+		glyph: 'z',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Zombie",
+		str: 0,
+		dex: -4,
+		inte: -3,
+		health: 15,
+		exp: 10,
+		lootChance: 0.5,
+		action: actionFactory.CreateBiteAttack()
+	    );
+	    zombie.inventory.Add(itemFactory.CreateMediumArmor());
+	    return zombie;
+	}
+
+	public Entity CreateGhoul()
+	{
+	    var ghoul =  CreateMonster(
+		glyph: 'U',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Ghoul",
+		str: 4,
+		dex: 4,
+		inte: -3,
+		health: 8,
+		exp: 20,
+		lootChance: 0.7,
+		action: actionFactory.CreateTalonAttack()
+	    );
+	    ghoul.inventory.Add(itemFactory.CreateGreatSword());
+	    ghoul.inventory.Add(itemFactory.CreateMediumArmor());
+	    return ghoul;
+	}
+
+	public Entity CreateNecromancer()
+	{
+	    var zombie =  CreateMonster(
+		glyph: 'N',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Necromancer",
+		str: 0,
+		dex: 0,
+		inte: 4,
+		health: 18,
+		exp: 50,
+		lootChance: 0.9,
+		action: actionFactory.CreateSpellAttack()
+	    );
+	    return zombie;
+	}
     }
 }

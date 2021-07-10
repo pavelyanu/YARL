@@ -26,13 +26,13 @@ namespace YARL.Topography
 	    _roomMaxSize = roomMaxSize;
 	    _roomMinSize = roomMinSize;
 	    _map = new Map(width, height);
-	    random = new Random();
 	    sb = new StringBuilder();
 	    tileFactory = new TileFactory();
 	}
 
 	public Map CreateMap()
 	{
+	    random = new Random();
 	    for ( int r = 0; r < _maxRooms; r++ )
 	    {
 		int roomWidth = random.Next( _roomMinSize * 2, _roomMaxSize );

@@ -11,7 +11,7 @@ namespace YARL.Actors
 {
     public class Monster: Entity
     {
-	public List<Item> loot { get; set; }
+	public int exp { get; protected set; }
 	public double lootChance { get; set; }			
 	public Monster(
 	    char _glyph,
@@ -22,12 +22,12 @@ namespace YARL.Actors
 	    int _dex,
 	    int _inte,
 	    int _health,
-	    List<Item> _loot,
+	    int _exp,
 	    double _lootchance,
 	    Action _action
 	    ) : base(_glyph, _drawBehaviour, _movement, _name, _str, _dex, _inte, _health)
 	{
-	    loot = _loot;
+	    exp = _exp;
 	    lootChance = _lootchance;
 	    actions.Add(_action.name, _action);
 	    inventory = new MonsterInventory();
@@ -78,12 +78,12 @@ namespace YARL.Actors
 	public List<Item> GetLoot()
 	{
 	    var result = new List<Item>();
-	    foreach(var item in loot)
+	    foreach(var item in inventory.items)
 	    {
 		int x = Roller.Roll(100);
 		if (x < lootChance * 100)
 		{
-		    result.Add(item);
+		    result.Add(item.Value);
 		}
 	    }
 	    return result;

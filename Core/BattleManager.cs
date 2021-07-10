@@ -41,7 +41,7 @@ namespace YARL.Core
 	public void StartTurn()
 	{
 	    movement_left = player.movement;
-	    action_left = 1;
+	    action_left = player.n_of_actions;
 	}
 
 	public void EndTurn()
@@ -241,6 +241,8 @@ namespace YARL.Core
 			    level.PutItem(item, target.position);
 			}
 		    }
+		    player.AddExp(monster.exp);
+		    gameLog.Add($"Player has earned {monster.exp} experience");
 		    level.RemoveEntity(target);
 		    initiative.Remove(target);
 		}

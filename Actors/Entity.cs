@@ -11,6 +11,7 @@ namespace YARL.Actors
 	public IDrawBehaviour drawBehaviour { get; set; }
 
 	public int movement { get; protected set; }
+	public int n_of_actions { get; protected set; }
 	public int armor_class { get => 10 + GetCappedDex() + ac_modifier; }
 	public int dex_ac_cap { get; protected set; }
 	public int ac_modifier { get; protected set; }
@@ -46,6 +47,7 @@ namespace YARL.Actors
 	    maxHealth = _health;
 	    actions = new Dictionary<string, Action>();
 	    ac_modifier = 0;
+	    n_of_actions = 1;
 	}
 
 	public override bool Equals(object o) =>

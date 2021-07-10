@@ -12,7 +12,7 @@ namespace YARL.Core
 	    int result = 0;
 	    for (int i = 0; i < n; i++)
 	    {
-		result += random.Next(1, dice);
+		result += random.Next(dice) + 1;
 	    }
 	    return result;
 	}

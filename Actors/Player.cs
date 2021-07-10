@@ -12,7 +12,9 @@ namespace YARL.Actors
 	public int lvl { get; protected set; }
 
 	public delegate void LeveledUp(int level);
+	public delegate void InitiatedLevelTransfer();
 	public event LeveledUp leveledUp;
+	public event InitiatedLevelTransfer levelTransfer;
 
 	public Player(
 	    IDrawBehaviour _drawBehaviour,
@@ -23,17 +25,25 @@ namespace YARL.Actors
 	) : base('@',_drawBehaviour, 6, "You", _str, _dex, _inte, _health)
 	{
 	    inventory = new PlayerInventory(this);
+	    nextLvl = 10;
 	}
 
 	public void AddExp(int _exp)
 	{
 	    exp += _exp;
-	    if (exp > nextLvl)
+	    if (exp >= nextLvl)
 	    {
 		exp = exp - nextLvl;
 		lvl += 1;
+		nextLvl *= 10;
 		leveledUp(lvl);
+		n_of_actions++;
 	    }
+	}
+
+	public void LevelTransfer()
+	{
+	    levelTransfer(); 
 	}
 
 	public void SetStr(int _str)
@@ -46,12 +56,25 @@ namespace YARL.Actors
 	    dex = _dex;
 	}
 	
+	public Dictionary<string, int> GetStats()
+	{
+	    var result = new Dictionary<string, int>();
+	    result.Add("str.", str);
+	    result.Add("dex.", dex);
+	    return result;
+	}
+
+	public void SetStats(Dictionary<string, int> dict)
+	{
+	    str = dict["str."];
+	    dex = dict["dex."];
+	}
+
 	public List<string> DrawStats()
 	{
 	    var result = new List<string>();
 	    result.Add($"str. : {str}");
 	    result.Add($"dex. : {dex}");
-	    result.Add($"int. : {inte}");
 	    return result;
 	}
 
@@ -60,6 +83,7 @@ namespace YARL.Actors
 	    var result = new List<string>();
 	    result.Add($"health : {health}");
 	    result.Add($"ac. : {armor_class}");
+	    result.Add($"exp. to next level: {nextLvl - exp}");
 	    return result;
 	}
     }

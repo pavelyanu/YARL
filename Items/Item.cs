@@ -41,15 +41,25 @@ namespace YARL.Items
 	{
 	    pickBehaviour.Pick(player, this);
 	}
-
-	public void Equip(Player player)
+	
+	public bool CanEquip(Player player)
 	{
-	    equipBehaviour.Equip(player);
+	    return equipBehaviour.CanEquip(player);
 	}
 
-	public void UnEquip(Player player)
+	public string Equip(Player player)
 	{
-	    equipBehaviour.UnEquip(player);
+	    return equipBehaviour.Equip(player);
+	}
+
+	public string UnEquip(Player player)
+	{
+	    return equipBehaviour.UnEquip(player);
+	}
+
+	public bool CanUse(Player player)
+	{
+	    return useBehaviour.CanUse(player);
 	}
 
 	public string Use(Player player)

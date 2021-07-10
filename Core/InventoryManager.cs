@@ -70,7 +70,7 @@ namespace YARL.Core
 		{
 		    if (chooseMap.ContainsKey(key))
 		    {
-			inventory.Equip(chooseMap[key]);	    
+			gameLog.Add(inventory.Equip(chooseMap[key])); 
 			state = State.Overview;
 		    } else 
 		    {
@@ -86,7 +86,7 @@ namespace YARL.Core
 		{
 		    if (chooseMap.ContainsKey(key))
 		    {
-			inventory.UnEquip(chooseMap[key].equipmentType);
+			gameLog.Add(inventory.UnEquip(chooseMap[key].equipmentType));
 			state = State.Overview;
 		    } else
 		    {
@@ -102,7 +102,7 @@ namespace YARL.Core
 		{
 		    if (chooseMap.ContainsKey(key))
 		    {
-			inventory.Use(chooseMap[key]);
+			gameLog.Add(inventory.Use(chooseMap[key]));
 			state = State.Overview;
 		    } else
 		    {

@@ -60,6 +60,23 @@ namespace YARL.Items
 	    );
 	}
 
+	public Item CreateRapire()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '_',
+		name: "Rapire",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.Hands,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateRapireAttack()),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
 	public Item CreateShortSword()
 	{
 	    return Create(
@@ -94,6 +111,23 @@ namespace YARL.Items
 	    );
 	}
 
+	public Item CreateGreatSword()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: ']',
+		name: "Great Sword",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.Hands,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateGreatSwordAttack()),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
 	public Item CreateBow()
 	{
 	    return Create(
@@ -107,6 +141,23 @@ namespace YARL.Items
 		equipmentType: EquipmentType.Hands,
 		pickBehaviour: new AddItemBehaviour(),
 		equipBehaviour: new AddActionBehaviour(actionFactory.CreateBowAttack()),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
+	public Item CreateWarBow()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '}',
+		name: "War bow",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.Hands,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateWarBowAttack()),
 		useBehaviour: new DoNothing()
 	    );
 	}
@@ -128,7 +179,7 @@ namespace YARL.Items
 	    );
 	}
 
-	public Item CreateLightArmour()
+	public Item CreateLightArmor()
 	{
 	    return Create(
 		drawBehaviour: drawBehaviour,
@@ -140,7 +191,41 @@ namespace YARL.Items
 		possessionType: PossessionType.Armor,
 		equipmentType: EquipmentType.Body,
 		pickBehaviour: new AddItemBehaviour(),
-		equipBehaviour: new ArmourBehaviour(1, -1),
+		equipBehaviour: new ArmourBehaviour(1, -1, 0),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
+	public Item CreateMediumArmor()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '(',
+		name: "Medium armor",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Armor,
+		equipmentType: EquipmentType.Body,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new ArmourBehaviour(3, 2, 2),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
+	public Item CreateHeavyArmor()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '>',
+		name: "Heavy armor",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Armor,
+		equipmentType: EquipmentType.Body,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new ArmourBehaviour(5, 0, 4),
 		useBehaviour: new DoNothing()
 	    );
 	}
@@ -152,13 +237,13 @@ namespace YARL.Items
 		glyph: '^',
 		name: "Gem",
 		equipable: false,
-		usable: false,
+		usable: true,
 		amount: 1,
 		possessionType: PossessionType.Armor,
 		equipmentType: EquipmentType.None,
 		pickBehaviour: new AddItemBehaviour(),
 		equipBehaviour: new DoNothing(),
-		useBehaviour: new DoNothing()
+		useBehaviour: new TeleportBehaviour()
 	    );
 	}
 

@@ -17,7 +17,7 @@ namespace YARL.Actors
             player = p;
         }
 
-        public void Equip(Item item)
+        public string Equip(Item item)
         {
             if (!items.ContainsKey(item.name))
                 throw new ArgumentException($"{item.name} is not in the inventory");
@@ -25,28 +25,34 @@ namespace YARL.Actors
                 throw new ArgumentException($"{item.name} is not equipable");
             if (!equipment.ContainsKey(item.equipmentType) || equipment[item.equipmentType] is null)
             {
-                equipment[item.equipmentType] = item;
-                Remove(item);
-                item.Equip(player);
-            } else if (equipment.ContainsKey(item.equipmentType))
+		if (item.CanEquip(player))
+		{
+		    equipment[item.equipmentType] = item;
+		    Remove(item);
+		}
+                return item.Equip(player);
+            } else
 	    {
-		UnEquip(item.equipmentType);
-		equipment[item.equipmentType] = item;
-                Remove(item);
-		item.Equip(player);
+		if (item.CanEquip(player))
+		{
+		    UnEquip(item.equipmentType);
+		    equipment[item.equipmentType] = item;
+		    Remove(item);
+		}
+		return item.Equip(player);
 	    }
         }
 
-        public void UnEquip(EquipmentType equipmentType)
+        public string UnEquip(EquipmentType equipmentType)
         {
             if (!equipment.ContainsKey( equipmentType ) || equipment[equipmentType] is null)
                 throw new ArgumentException($"Nothing is equipped in this slot.");
 
             Item item = equipment[equipmentType];
             equipment.Remove(equipmentType);
-            item.UnEquip(player);
 	    item.amount++;
             Add(item);
+            return item.UnEquip(player);
         }
 
 	public string Use(Item item)

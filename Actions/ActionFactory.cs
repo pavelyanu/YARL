@@ -58,6 +58,23 @@ namespace YARL.Actions
 	    );
 	}
 
+	public Action CreateRapireAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Rapire attack",
+		range: 1,
+		str_based: false,
+		dex_based: true,
+		inte_based: false,
+		dice: 6,
+		numberOfDice: 1,
+		uses: null
+	    );
+	}
+
+
 	public Action CreateShortSwordAttack()
 	{
 	    return CreateAttack(
@@ -90,6 +107,22 @@ namespace YARL.Actions
 	    );
 	}
 
+	public Action CreateGreatSwordAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Great sword attack",
+		range: 1,
+		str_based: true,
+		dex_based: false,
+		inte_based: false,
+		dice: 6,
+		numberOfDice: 2,
+		uses: null
+	    );
+	}
+
 	public Action CreateBowAttack()
 	{
 	    return CreateAttack(
@@ -105,5 +138,70 @@ namespace YARL.Actions
 		uses: itemFactory.CreateArrow()
 	    );
 	}
+
+	public Action CreateWarBowAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "War bow attack",
+		range: 7,
+		str_based: false,
+		dex_based: true,
+		inte_based: false,
+		dice: 8,
+		numberOfDice: 1,
+		uses: itemFactory.CreateArrow()
+	    );
+	}
+
+	public Action CreateBiteAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Bite attack",
+		range: 1,
+		str_based: true,
+		dex_based: false,
+		inte_based: false,
+		dice: 8,
+		numberOfDice: 1,
+		uses: itemFactory.CreateArrow()
+	    );
+	}
+
+	public Action CreateTalonAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Talon attack",
+		range: 1,
+		str_based: false,
+		dex_based: true,
+		inte_based: false,
+		dice: 6,
+		numberOfDice: 2,
+		uses: itemFactory.CreateArrow()
+	    );
+	}
+	
+	public Action CreateSpellAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Spell attack",
+		range: 7,
+		str_based: false,
+		dex_based: false,
+		inte_based: true,
+		dice: 4,
+		numberOfDice: 4,
+		uses: itemFactory.CreateArrow()
+	    );
+	}
+
     }
 }

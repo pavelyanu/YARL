@@ -21,6 +21,7 @@ namespace YARL.Core
 	List<Entity> entities;
 	GameLog gameLog;
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
+	MapGenerator mapGenerator;
 	Dictionary<char, Item> chooseMap;
 	Player player;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
@@ -32,7 +33,14 @@ namespace YARL.Core
 	public bool playerHasWon { get => entities.Count == 0 && player.inventory.items.ContainsKey("Gem"); }
 
 	public Level(
-	    int w, int h, int _maxRooms, int _roomMaxSize, int _roomMinSize, int _level, GameLog _gameLog
+	    int w,
+	    int h,
+	    int _maxRooms,
+	    int _roomMaxSize,
+	    int _roomMinSize,
+	    int _level,
+	    GameLog _gameLog,
+	    Player _player
 	)
 	{
 	    Width = w;
@@ -43,10 +51,11 @@ namespace YARL.Core
 	    printedPreFinal = false;
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
 	    chooseMap = new Dictionary<char, Item>();
-	    var mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
+	    mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
 	    entities = new List<Entity>();
 	    entityFactory = new EntityFactory(new DefaultDraw());
 	    itemFactory = new ItemFactory(new DefaultDraw());
+	    player = _player;
 	    map = mapGenerator.CreateMap();
 	    Prepare();
 	    PopulateLevel();
@@ -172,17 +181,40 @@ namespace YARL.Core
 
 	public void Prepare()
 	{
-	    var firstRoom = Rooms[0];
-	    PutItem(itemFactory.CreateDagger(), firstRoom.Center + new Vector2(0, 1));
-	    PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
-	    var lastRoom = Rooms[Rooms.Count - 1];
-	    PutItem(itemFactory.CreateGoalGem(), lastRoom.Center);
-	    var ork1 = entityFactory.CreateOrc();
-	    ork1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
-	    AddEntity(ork1);
-	    var bowmen = entityFactory.CreateGoblinWithBow();
-	    bowmen.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
-	    AddEntity(bowmen);
+	    if (level == 1)
+	    {
+		var firstRoom = Rooms[0];
+		player.position = firstRoom.Center;
+		AddPlayer(player);
+		PutItem(itemFactory.CreateGoalGem(), firstRoom.Center + new Vector2(0, 2));
+		PutItem(itemFactory.CreateDagger(), firstRoom.Center + new Vector2(0, 1));
+		PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
+		var lastRoom = Rooms[Rooms.Count - 1];
+		var ork1 = entityFactory.CreateOrc();
+		var gem = itemFactory.CreateGoalGem();
+		ork1.inventory.Add(itemFactory.CreateGoalGem());
+		ork1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
+		AddEntity(ork1);
+		var bowmen = entityFactory.CreateGoblinWithBow();
+		bowmen.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
+		AddEntity(bowmen);
+	    } else 
+	    {
+		var firstRoom = Rooms[0];
+		player.position = firstRoom.Center;
+		AddPlayer(player);
+		var lastRoom = Rooms[Rooms.Count - 1];
+		var necromanser = entityFactory.CreateNecromancer();
+		necromanser.inventory.Add(itemFactory.CreateGoalGem());
+		necromanser.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
+		AddEntity(necromanser);
+		var ghoul1 = entityFactory.CreateGhoul();
+		ghoul1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
+		AddEntity(ghoul1);
+		var ghoul2 = entityFactory.CreateGhoul();
+		ghoul2.position = lastRoom.Center + new Vector2(Roller.Roll(3), 3);
+		AddEntity(ghoul2);
+	    }
 	}
 
 	public void PopulateLevel()
@@ -191,25 +223,49 @@ namespace YARL.Core
 	    {
 		if (Rooms[0] == room || Rooms[Rooms.Count - 1] == room)
 		    continue;
-		int number = Roller.Roll(3) - 1;
+
+		int number;
+		if (level == 1) number = Roller.Roll(3) - 1;
+		else number = Roller.Roll(4) - 1;
+		
 		for (int i = 0; i < number; i++)
 		{
-		    int type = Roller.Roll(5);
+		    int type = Roller.Roll(6);
 		    switch (type)
 		    {
 			case 1:
 			case 2:
-			    var goblin = entityFactory.CreateGoblin();
-			    goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
-			    AddEntity(goblin);
-			    break;
 			case 3:
-			case 4:
-			    var bowmen = entityFactory.CreateGoblinWithBow();
-			    bowmen.position = room.Center + new Vector2(Roller.Roll(3), i);
-			    AddEntity(bowmen);
+			    if (level == 1)
+			    {
+				var goblin = entityFactory.CreateGoblin();
+				goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(goblin);
+			    } else 
+			    {
+				var zombie1 = entityFactory.CreateZombie();
+				zombie1.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(zombie1);
+				var zombie2 = entityFactory.CreateZombie();
+				zombie2.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
+				AddEntity(zombie2);
+			    }
 			    break;
+			case 4:
 			case 5:
+			    if (level == 1)
+			    {
+				var bowmen = entityFactory.CreateGoblinWithBow();
+				bowmen.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(bowmen);
+			    } else 
+			    {
+				var ghoul = entityFactory.CreateGhoul();
+				ghoul.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(ghoul);
+			    }
+			    break;
+			case 6:
 			    var ork = entityFactory.CreateOrc();
 			    ork.position = room.Center + new Vector2(Roller.Roll(3), i);
 			    AddEntity(ork);
