@@ -14,6 +14,7 @@ Controls:
     Enter use mode: 'u',
     Exit from any mode: 'ESC',
     Exit game: 'Q',
+    Restart game after death: 'ENTER',
     In combat:
 	Choose action: '1234567890',
 	Apply action: 'ENTER',
