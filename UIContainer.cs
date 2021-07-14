@@ -2,14 +2,11 @@
 using Microsoft.Xna.Framework;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using SadConsole;
-using Serilog;
 using Console = SadConsole.Console;
 using YARL.Core;
 
 namespace YARL 
 {
-    // Creates/Holds/Destroys all consoles used in the game
-    // and makes consoles easily addressable from a central place.
     public class UIManager : ContainerConsole
     {
 	public ScrollingConsole MainConsole;
@@ -24,14 +21,10 @@ namespace YARL
 
         public UIManager()
         {
-            // must be set to true
-            // or will not call each child's Draw method
             IsVisible = true;
             IsFocused = true;
 	    UseMouse = false;
 
-            // The UIManager becomes the only
-            // screen that SadConsole processes
             Parent = SadConsole.Global.CurrentScreen;
         }
 
@@ -45,7 +38,6 @@ namespace YARL
 	    double WRatio;
 	    double HRatio;
 
-	    // Set UpperLeftConsole
 	    X = _X;
 	    Y = _Y;
 	    WRatio =  0.3;
@@ -58,7 +50,6 @@ namespace YARL
 	    UpperLeftConsole.Position = new Point(X, Y);
 
 
-	    // Set UpperMiddleConsole
 	    X = UpperLeftConsole.Width;
 	    Y = _Y;
 	    WRatio =  0.3;
@@ -71,7 +62,6 @@ namespace YARL
 	    UpperMiddleConsole.Position = new Point(X, Y);
 
 
-	    // Set UpperRightConsole
 	    X = UpperMiddleConsole.Position.X + UpperMiddleConsole.Width;
 	    Y = _Y;
 	    WRatio =  0.3;
@@ -84,7 +74,6 @@ namespace YARL
 	    UpperRightConsole.Position = new Point(X, Y);
 
 	    
-	    // Set LeftSideConsole
 	    X = _X;
 	    Y = UpperLeftConsole.Height;
 	    WRatio =  0.2;
@@ -98,7 +87,6 @@ namespace YARL
 	    UpperLeftConsole.Fill(Color.Pink, Color.Pink, 0);
 
 	    
-	    // Set MainConsole
 	    W  = (int) Math.Floor((double) (W * 0.6));
 	    H = (int) Math.Floor((double) (H * 0.5));
 	    MainConsole = new ScrollingConsole(W, H);
@@ -106,7 +94,6 @@ namespace YARL
 				    UpperLeftConsole.Height);
 		
 
-	    // Set RightSideConsole
 	    X = MainConsole.Position.X + MainConsole.Width;
 	    Y = UpperLeftConsole.Height;
 	    WRatio =  0.2;
@@ -120,7 +107,6 @@ namespace YARL
 	    UpperLeftConsole.Fill(Color.Yellow, Color.Yellow, 0);
 
 
-	    // Set BottomConsole
 	    X = _X;
 	    Y = MainConsole.Position.Y + MainConsole.Height;
 	    WRatio =  1;
@@ -138,7 +124,6 @@ namespace YARL
 	    model = _model;
 	}
 
-        // centers the viewport camera on an Actor
         public void CenterOnActor(System.Numerics.Vector2 p)
         {
             MainConsole.CenterViewPortOnPoint(new Point((int) p.X, (int) p.Y));
@@ -151,11 +136,8 @@ namespace YARL
             base.Update(timeElapsed);
         }
 
-        // Scans the SadConsole's Global KeyboardState and triggers behaviour
-        // based on the button pressed.
         private void CheckKeyboard()
         {
-            // As an example, we'll use the F5 key to make the game full screen
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.F5))
             {
                 SadConsole.Settings.ToggleFullScreen();
@@ -193,6 +175,10 @@ namespace YARL
                 CenterOnActor(model.level.GetPlayerPosition());
             } else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Enter))
 	    {
+		if (model.ended)
+		{
+		    model = new YarlGame(MainConsole.Width, MainConsole.Height, BottomConsole.Height);
+		}
 		model.Update("\n");
 	    } else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Escape))
 	    {
@@ -205,7 +191,6 @@ namespace YARL
 		    if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
 			SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
 		    {
-			
 		    model.Update(keys[0].Character.ToString().ToUpper());
 		    } else model.Update(keys[0].Character.ToString());
 		    CenterOnActor(model.level.GetPlayerPosition());
@@ -228,12 +213,15 @@ namespace YARL
 	    LeftSideConsole.Clear();
 	    RightSideConsole.Clear();
 	    BottomConsole.Clear();
-	    if (model.level.playerHasWon)
+	    if (model.playerHasWon)
 	    {
 		MainConsole.Print(0, MainConsole.Height / 2, "You have won. Congratulations!");
 	    } else if (model.ended)
 	    {
 		MainConsole.Print(0, MainConsole.Height / 2, "You have died...");
+	    } else if (model.leveling)
+	    {
+		MainConsole.Print(0, MainConsole.Height / 2, "You have to level up before you can continue");
 	    } else 
 	    {
 		var array = model.DrawOnMain();
@@ -267,11 +255,6 @@ namespace YARL
 	    DrawLinesAroundConsole(BottomConsole);
 	}
 
-        // Creates a window that encloses a map console
-        // of a specified height and width
-        // and displays a centered window title
-        // make sure it is added as a child of the UIManager
-        // so it is updated and drawn
 	
 	void DrawLinesAroundConsole(Console console)
 	{

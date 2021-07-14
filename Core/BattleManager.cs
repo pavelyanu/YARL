@@ -35,7 +35,12 @@ namespace YARL.Core
 	    initiative.Add(player);
 	    targeting = false;
 	    endingTurn = false;
-	    StartTurn();
+	    if (Roller.Roll(3) == 1)
+	    {
+		EndTurn();
+	    } else {
+		StartTurn();
+	    }
 	}
 
 	public void StartTurn()

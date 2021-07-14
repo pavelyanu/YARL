@@ -38,7 +38,7 @@ namespace YARL.Actors
 	    var vectors = new List<Vector2>();    
 	    var action = actions.Values.ToList()[0];
 	    Log.Information($"Action is {action.name}");
-	    int distance = level.GetDistance(position, level.GetPlayerPosition()) - 1; 
+	    int distance = level.GetDistance(position, level.GetPlayerPosition()); 
 	    Log.Information($"My position is {position}");
 	    Log.Information($"The player position is {level.GetPlayerPosition()}");
 	    Log.Information($"The distance to the player is {distance}");

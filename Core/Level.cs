@@ -30,7 +30,6 @@ namespace YARL.Core
 					    this[player.position].items.Count == 0); }
 	public bool printedPreFinal;
 	public bool choosingItem;
-	public bool playerHasWon { get => entities.Count == 0 && player.inventory.items.ContainsKey("Gem"); }
 
 	public Level(
 	    int w,
@@ -79,11 +78,6 @@ namespace YARL.Core
 
 	public bool ProcessInput(char key)
 	{
-	    if (entities.Count == 0 && !printedPreFinal)
-	    {
-		WriteToLog("You have killed all the monsters. Now you have to find a gem");
-		printedPreFinal = true;
-	    }
 	    bool result = false;
 	    if (choosingItem)
 	    {
@@ -94,8 +88,6 @@ namespace YARL.Core
 		if (chooseMap.ContainsKey(key))
 		{
 		    PlayerPickItem(chooseMap[key].name);
-		    if (chooseMap[key].name == "Gem")
-			WriteToLog("You have found the gem. Now you have to kill all the monsters!");
 		    choosingItem = false;
 		} else 
 		{
@@ -116,7 +108,7 @@ namespace YARL.Core
 		{
 		    if (standingOnItems)
 		    {
-			chooseMap = GetChooseMap(this[player.position].items);
+			chooseMap = GetChooseMap(this[player.position].items.Values.ToList());
 			choosingItem = true;
 		    }
 		} else if (playerInCorridor || GetMonstersNearPlayer().Count == 0)
@@ -186,7 +178,6 @@ namespace YARL.Core
 		var firstRoom = Rooms[0];
 		player.position = firstRoom.Center;
 		AddPlayer(player);
-		PutItem(itemFactory.CreateGoalGem(), firstRoom.Center + new Vector2(0, 2));
 		PutItem(itemFactory.CreateDagger(), firstRoom.Center + new Vector2(0, 1));
 		PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
 		var lastRoom = Rooms[Rooms.Count - 1];
@@ -198,7 +189,7 @@ namespace YARL.Core
 		var bowmen = entityFactory.CreateGoblinWithBow();
 		bowmen.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
 		AddEntity(bowmen);
-	    } else 
+	    } else if (level == 2)
 	    {
 		var firstRoom = Rooms[0];
 		player.position = firstRoom.Center;
@@ -214,6 +205,22 @@ namespace YARL.Core
 		var ghoul2 = entityFactory.CreateGhoul();
 		ghoul2.position = lastRoom.Center + new Vector2(Roller.Roll(3), 3);
 		AddEntity(ghoul2);
+	    } else if (level == 3)
+	    {
+		var firstRoom = Rooms[0];
+		player.position = firstRoom.Center;
+		AddPlayer(player);
+		var lastRoom = Rooms[Rooms.Count - 1];
+		var king = entityFactory.CreateGnomeKing();
+		king.inventory.Add(itemFactory.CreateGoalGem());
+		king.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
+		AddEntity(king);
+		var archer1 = entityFactory.CreateArcherGnome();
+		archer1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
+		AddEntity(archer1);
+		var archer2 = entityFactory.CreateArcherGnome();
+		archer2.position = lastRoom.Center + new Vector2(Roller.Roll(3), 3);
+		AddEntity(archer2);
 	    }
 	}
 
@@ -241,14 +248,32 @@ namespace YARL.Core
 				var goblin = entityFactory.CreateGoblin();
 				goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(goblin);
-			    } else 
+			    } else if (level == 2) 
 			    {
+				int roll = Roller.Roll(5);
 				var zombie1 = entityFactory.CreateZombie();
-				zombie1.position = room.Center + new Vector2(Roller.Roll(3), i);
-				AddEntity(zombie1);
 				var zombie2 = entityFactory.CreateZombie();
-				zombie2.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
-				AddEntity(zombie2);
+				var skeleton = entityFactory.CreateSkeleton();
+				if (roll < 3)
+				{
+				    zombie1.position = room.Center + new Vector2(Roller.Roll(3), i);
+				    AddEntity(zombie1);
+				} else if (roll < 5)
+				{
+				    skeleton.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
+				    AddEntity(skeleton);
+				} else 
+				{
+				    zombie1.position = room.Center + new Vector2(Roller.Roll(3), i);
+				    AddEntity(zombie1);
+				    skeleton.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
+				    AddEntity(skeleton);
+				}
+			    } else if (level == 3)
+			    {
+				var gnome = entityFactory.CreateGnome();
+				gnome.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(gnome);
 			    }
 			    break;
 			case 4:
@@ -258,17 +283,39 @@ namespace YARL.Core
 				var bowmen = entityFactory.CreateGoblinWithBow();
 				bowmen.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(bowmen);
-			    } else 
+			    } else if (level == 2)
 			    {
 				var ghoul = entityFactory.CreateGhoul();
 				ghoul.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(ghoul);
+			    } else if (level == 3)
+			    {
+				var gnome = entityFactory.CreateArcherGnome();
+				gnome.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(gnome);
 			    }
 			    break;
 			case 6:
-			    var ork = entityFactory.CreateOrc();
-			    ork.position = room.Center + new Vector2(Roller.Roll(3), i);
-			    AddEntity(ork);
+			    if (level == 1)
+			    {
+				var goblin = entityFactory.CreateGoblin();
+				goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(goblin);
+			    } else if (level == 2)
+			    {
+				var ork = entityFactory.CreateOrc();
+				ork.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(ork);
+			    } else if (level == 3)
+			    {
+				
+				var ghoul1 = entityFactory.CreateGhoul();
+				ghoul1.position = room.Center + new Vector2(Roller.Roll(3), i);
+				AddEntity(ghoul1);
+				var ghoul2 = entityFactory.CreateGhoul();
+				ghoul2.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
+				AddEntity(ghoul2);
+			    }
 			    break;
 		    }
 		}
@@ -329,17 +376,17 @@ namespace YARL.Core
 	    var position = player.position;
 	    if (map[position].items.Count != 0)
 	    {
-		int index = -1;
-		foreach(var item in map[position].items)
+		Item item = null;
+		foreach(var i in map[position].items.Values)
 		{
-		    if (item.name == name)
+		    if (i.name == name)
 		    {
-			item.Pick(player);
-			index = map[position].items.IndexOf(item);
+			i.Pick(player);
+			item = i;
 		    }
 		}
-		if (index != -1)
-		    map[position].items.RemoveAt(index);
+		if (item is not null)
+		    map[position].RemoveItem(item);
 	    }
 	}
 
@@ -404,13 +451,8 @@ namespace YARL.Core
 	public void PutItem(Item item, Vector2 position)
 	{
 	    bool found = false;
-	    foreach(var i in map[position].items)
-	    {
-		if (i.name == item.name)
-		    i.amount++;
-	    }
 	    if (!found)
-		map[position].items.Add(item);
+		map[position].PutItem(item);
 	}
 
 	public List<Tile> GetLine(Vector2 origin, Vector2 destination)
@@ -452,7 +494,12 @@ namespace YARL.Core
 	    result.Add("Pick an Item");
 	    foreach(var item in chooseMap)
 	    {
-		result.Add($"{item.Key} - {item.Value.name}");
+		string amount = "";
+		if (item.Value.amount > 1)
+		{
+		    amount = $"({item.Value.amount})";
+		}
+		result.Add($"{item.Key} - {item.Value.name} {amount}");
 	    }
 	    return result;
 	}

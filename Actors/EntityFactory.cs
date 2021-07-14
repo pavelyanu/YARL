@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using YARL.Items;
 using YARL.Actions;
 using YARL.Drawing;
@@ -70,7 +69,7 @@ namespace YARL.Actors
 		dex: 0,
 		inte: -3,
 		health: 5,
-		exp: 5,
+		exp: 3,
 		lootChance: 0.7,
 		action: actionFactory.CreateShortSwordAttack()
 	    );
@@ -90,7 +89,7 @@ namespace YARL.Actors
 		dex: 1,
 		inte: -3,
 		health: 4,
-		exp: 5,
+		exp: 3,
 		lootChance: 0.7,
 		action: actionFactory.CreateBowAttack()
 	    );
@@ -106,7 +105,7 @@ namespace YARL.Actors
 		drawBehaviour: drawBehaviour,
 		movement: 5,
 		name: "Orc",
-		str: 2,
+		str: 1,
 		dex: 0,
 		inte: -3,
 		health: 8,
@@ -136,24 +135,43 @@ namespace YARL.Actors
 	    zombie.inventory.Add(itemFactory.CreateMediumArmor());
 	    return zombie;
 	}
-
+	
+	public Entity CreateSkeleton()
+	{
+	    var skeleton = CreateMonster(
+		glyph: 's',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Skeleton",
+		str: 0,
+		dex: 3,
+		inte: -3,
+		health: 8,
+		exp: 10,
+		lootChance: 0.5,
+		action: actionFactory.CreateLongBowAttack()
+	    );
+	    skeleton.inventory.Add(itemFactory.CreateLongBow());
+	    return skeleton;
+	}
+	
 	public Entity CreateGhoul()
 	{
 	    var ghoul =  CreateMonster(
 		glyph: 'U',
 		drawBehaviour: drawBehaviour,
-		movement: 5,
+		movement: 7,
 		name: "Ghoul",
 		str: 4,
 		dex: 4,
 		inte: -3,
-		health: 8,
+		health: 10,
 		exp: 20,
 		lootChance: 0.7,
 		action: actionFactory.CreateTalonAttack()
 	    );
 	    ghoul.inventory.Add(itemFactory.CreateGreatSword());
-	    ghoul.inventory.Add(itemFactory.CreateMediumArmor());
+	    ghoul.inventory.Add(itemFactory.CreateArrow());
 	    return ghoul;
 	}
 
@@ -170,9 +188,68 @@ namespace YARL.Actors
 		health: 18,
 		exp: 50,
 		lootChance: 0.9,
-		action: actionFactory.CreateSpellAttack()
+		action: actionFactory.CreateMagicMissle()
 	    );
 	    return zombie;
 	}
+
+	public Entity CreateGnome()
+	{
+	    var gnome =  CreateMonster(
+		glyph: 'G',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Gnome",
+		str: 6,
+		dex: 0,
+		inte: -3,
+		health: 20,
+		exp: 80,
+		lootChance: 0.7,
+		action: actionFactory.CreateWarhammerAttack()
+	    );
+	    gnome.inventory.Add(itemFactory.CreateWarhammer());
+	    gnome.inventory.Add(itemFactory.CreateHeavyArmor());
+	    return gnome;
+	}
+
+	public Entity CreateArcherGnome()
+	{
+	    var gnome =  CreateMonster(
+		glyph: 'A',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Archer gnome",
+		str: 0,
+		dex: 6,
+		inte: -3,
+		health: 15,
+		exp: 80,
+		lootChance: 0.7,
+		action: actionFactory.CreateWarBowAttack()
+	    );
+	    gnome.inventory.Add(itemFactory.CreateWarBow());
+	    gnome.inventory.Add(itemFactory.CreateArrow());
+	    return gnome;
+	}
+
+	public Entity CreateGnomeKing()
+	{
+	    var gnome =  CreateMonster(
+		glyph: 'K',
+		drawBehaviour: drawBehaviour,
+		movement: 5,
+		name: "Gnome King",
+		str: 8,
+		dex: 3,
+		inte: -3,
+		health: 40,
+		exp: 100,
+		lootChance: 1,
+		action: actionFactory.CreateWarhammerAttack()
+	    );
+	    return gnome;
+	}
+
     }
 }

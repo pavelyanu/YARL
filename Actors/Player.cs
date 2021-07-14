@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using YARL.Core;
 using YARL.Drawing;
 
 namespace YARL.Actors
@@ -35,9 +34,11 @@ namespace YARL.Actors
 	    {
 		exp = exp - nextLvl;
 		lvl += 1;
-		nextLvl *= 10;
+		nextLvl *= 5;
 		leveledUp(lvl);
 		n_of_actions++;
+		maxHealth *= 2;
+		health = maxHealth;
 	    }
 	}
 

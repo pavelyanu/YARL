@@ -11,7 +11,9 @@ namespace YARL.Core {
 	protected int Width;
 	public bool inBattle { get => level.PlayerInRoomWithMonster(); }
 	public bool playerHasLost { get => !player.alive; }
+	public bool leveling { get => characterManager.leveling && !inBattle; }
 	public bool ended;
+	public bool playerHasWon { get; set; }
 	bool showInventory;
 	public Level level;
 	InventoryManager inventoryManager;
@@ -33,6 +35,7 @@ namespace YARL.Core {
 	    inventoryManager = new InventoryManager(player, gameLog);
 	    characterManager = new CharacterManager(player, gameLog);
 	    ended = false;
+	    playerHasWon = false;
 	    showInventory = true;
 	    if (inBattle)
 	    {
@@ -76,7 +79,7 @@ namespace YARL.Core {
 		    if (inventoryManager.selecting || "eru".Contains(key))
 		    {
 			inventoryManager.ProcessInput(key);
-		    } else if (key == ',')
+		    } else if (level.choosingItem || ",".Contains(key))
 		    {
 			level.ProcessInput(key);
 		    } else
@@ -96,7 +99,13 @@ namespace YARL.Core {
 
 	public void OnLevelTransfer()
 	{
-	    level = new Level(Width, Height, 12, 15, 5, 2, gameLog, player);
+	    if (level.level < 3)
+	    {
+		level = new Level(Width, Height, 12, 15, 5, level.level + 1, gameLog, player);
+	    } else 
+	    {
+		playerHasWon = true;
+	    }
 	}
 
 	public char[,] DrawOnMain()
@@ -108,6 +117,10 @@ namespace YARL.Core {
 	{
 	    if (inBattle)
 	    {
+		if (level.choosingItem)
+		{
+		    return level.DrawOnSide();
+		}
 		return battleManager.DrawOnSide();
 	    } else if (level.choosingItem)
 	    {

@@ -1,5 +1,4 @@
 using YARL.Items;
-using YARL.Drawing;
 
 namespace YARL.Actions
 {
@@ -123,6 +122,22 @@ namespace YARL.Actions
 	    );
 	}
 
+	public Action CreateWarhammerAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Great sword attack",
+		range: 1,
+		str_based: true,
+		dex_based: false,
+		inte_based: false,
+		dice: 4,
+		numberOfDice: 4,
+		uses: null
+	    );
+	}
+
 	public Action CreateBowAttack()
 	{
 	    return CreateAttack(
@@ -139,6 +154,22 @@ namespace YARL.Actions
 	    );
 	}
 
+	public Action CreateLongBowAttack()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Bow attack",
+		range: 6,
+		str_based: false,
+		dex_based: true,
+		inte_based: false,
+		dice: 8,
+		numberOfDice: 1,
+		uses: itemFactory.CreateArrow()
+	    );
+	}
+
 	public Action CreateWarBowAttack()
 	{
 	    return CreateAttack(
@@ -149,7 +180,7 @@ namespace YARL.Actions
 		str_based: false,
 		dex_based: true,
 		inte_based: false,
-		dice: 8,
+		dice: 10,
 		numberOfDice: 1,
 		uses: itemFactory.CreateArrow()
 	    );
@@ -167,7 +198,7 @@ namespace YARL.Actions
 		inte_based: false,
 		dice: 8,
 		numberOfDice: 1,
-		uses: itemFactory.CreateArrow()
+		uses: null 
 	    );
 	}
 
@@ -181,25 +212,41 @@ namespace YARL.Actions
 		str_based: false,
 		dex_based: true,
 		inte_based: false,
-		dice: 6,
-		numberOfDice: 2,
-		uses: itemFactory.CreateArrow()
+		dice: 10,
+		numberOfDice: 1,
+		uses: null
 	    );
 	}
 	
-	public Action CreateSpellAttack()
+	public Action CreateMagicMissle()
 	{
 	    return CreateAttack(
 		cost: 1,
 		numOfTargets: 1,
-		name: "Spell attack",
+		name: "Magic missle attack",
 		range: 7,
 		str_based: false,
 		dex_based: false,
 		inte_based: true,
 		dice: 4,
 		numberOfDice: 4,
-		uses: itemFactory.CreateArrow()
+		uses: null
+	    );
+	}
+
+	public Action CreateFireMissle()
+	{
+	    return CreateAttack(
+		cost: 1,
+		numOfTargets: 1,
+		name: "Magic missle attack",
+		range: 7,
+		str_based: false,
+		dex_based: false,
+		inte_based: true,
+		dice: 6,
+		numberOfDice: 4,
+		uses: null
 	    );
 	}
 

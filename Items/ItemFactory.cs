@@ -128,6 +128,23 @@ namespace YARL.Items
 	    );
 	}
 
+	public Item CreateWarhammer()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: '=',
+		name: "Warhammer Sword",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.Hands,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateWarhammerAttack()),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
 	public Item CreateBow()
 	{
 	    return Create(
@@ -145,6 +162,23 @@ namespace YARL.Items
 	    );
 	}
 
+	public Item CreateLongBow()
+	{
+	    return Create(
+		drawBehaviour: drawBehaviour,
+		glyph: ';',
+		name: "Long bow",
+		equipable: true,
+		usable: false,
+		amount: 1,
+		possessionType: PossessionType.Weapon,
+		equipmentType: EquipmentType.Hands,
+		pickBehaviour: new AddItemBehaviour(),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateLongBowAttack()),
+		useBehaviour: new DoNothing()
+	    );
+	}
+
 	public Item CreateWarBow()
 	{
 	    return Create(
@@ -157,7 +191,7 @@ namespace YARL.Items
 		possessionType: PossessionType.Weapon,
 		equipmentType: EquipmentType.Hands,
 		pickBehaviour: new AddItemBehaviour(),
-		equipBehaviour: new AddActionBehaviour(actionFactory.CreateWarBowAttack()),
+		equipBehaviour: new AddActionBehaviour(actionFactory.CreateLongBowAttack()),
 		useBehaviour: new DoNothing()
 	    );
 	}
@@ -234,7 +268,7 @@ namespace YARL.Items
 	{
 	    return Create(
 		drawBehaviour: drawBehaviour,
-		glyph: '^',
+		glyph: '$',
 		name: "Gem",
 		equipable: false,
 		usable: true,

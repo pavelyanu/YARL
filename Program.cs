@@ -1,9 +1,6 @@
 ﻿using Serilog;
 using Microsoft.Xna.Framework;
-using Console = SadConsole.Console;
-using System.Text;
 using YARL.Core;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace YARL
 {
