@@ -26,20 +26,20 @@ namespace YARL.Core
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
 	public bool playerInCorridor { get => currentRoom.IsEmpty; }
 	public bool standingOnItems { get => !(this[player.position].items is null ||
-					    this[player.position].items.Count == 0); }
+		this[player.position].items.Count == 0); }
 	public bool printedPreFinal;
 	public bool choosingItem;
 
 	public Level(
-	    int w,
-	    int h,
-	    int _maxRooms,
-	    int _roomMaxSize,
-	    int _roomMinSize,
-	    int _level,
-	    GameLog _gameLog,
-	    Player _player
-	)
+		int w,
+		int h,
+		int _maxRooms,
+		int _roomMaxSize,
+		int _roomMinSize,
+		int _level,
+		GameLog _gameLog,
+		Player _player
+		)
 	{
 	    Width = w;
 	    Height = h;
@@ -152,17 +152,15 @@ namespace YARL.Core
 		{
 		    tile.visible = true;
 		}
-	    } else 
+	    } 
+	    var vectors = new List<Vector2>();
+	    for (int x = -1 ; x <= 1 ; ++x)
+		                    for (int y = -1 ; y <= 1 ; ++y)
+		                            if ((x, y) != (0, 0))
+		                                vectors.Add(new Vector2(x, y));
+	    foreach (var vector in vectors)
 	    {
-		var vectors = new List<Vector2>();
-		for (int x = -1 ; x <= 1 ; ++x)
-                    for (int y = -1 ; y <= 1 ; ++y)
-                        if ((x, y) != (0, 0))
-                            vectors.Add(new Vector2(x, y));
-		foreach (var vector in vectors)
-		{
-		    this[player.position + vector].visible = true;
-		}
+		this[player.position + vector].visible = true;
 	    }
 	}
 
@@ -218,7 +216,7 @@ namespace YARL.Core
 		if (Rooms[0] == room || Rooms[Rooms.Count - 1] == room)
 		    continue;
 
-                int number = Roller.Roll(level == 1 ? 3 : 4) - 1;
+		                int number = Roller.Roll(level == 1 ? 3 : 4) - 1;
 		for (int i = 0; i < number; i++)
 		{
 		    int type = Roller.Roll(6);
@@ -292,7 +290,7 @@ namespace YARL.Core
 				AddEntity(ork);
 			    } else if (level == 3)
 			    {
-				
+
 				Entity ghoul1 = entityFactory.CreateGhoul();
 				ghoul1.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(ghoul1);
@@ -307,7 +305,7 @@ namespace YARL.Core
 		    PutItem(itemFactory.CreateHealingPotion(), room.Center + new Vector2(Roller.Roll(2), 2));
 	    }
 	}
-	
+
 	public void AddPlayer(Player p)
 	{
 	    player = p;
@@ -343,8 +341,8 @@ namespace YARL.Core
 	    return false;
 	}
 
-        public bool PlayerInRoomWithMonster() =>
-            !playerInCorridor && roomPopulation[currentRoom].Count > 1;
+	        public bool PlayerInRoomWithMonster() =>
+	                !playerInCorridor && roomPopulation[currentRoom].Count > 1;
 
 	public void PlayerPickItem(string name)
 	{
@@ -433,8 +431,8 @@ namespace YARL.Core
 	public List<Tile> GetLine(Vector2 origin, Vector2 destination)
 	{
 	    return map.GetLine(
-		(int) origin.X, (int) origin.Y, (int) destination.X, (int) destination.Y
-	    ).ToList();
+		    (int) origin.X, (int) origin.Y, (int) destination.X, (int) destination.Y
+		    ).ToList();
 	}
 
 	public int GetDistance(Vector2 origin, Vector2 destination)
@@ -461,8 +459,8 @@ namespace YARL.Core
 	    }
 	    result[(int) GetPlayerPosition().X, (int) GetPlayerPosition().Y] = player.Draw();
 	    return result;
- 	}
-	
+	}
+
 	public List<string> DrawOnSide()
 	{
 	    var result = new List<string>();
