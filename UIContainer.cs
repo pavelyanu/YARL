@@ -151,16 +151,16 @@ namespace YARL
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Down))
             {
-		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
-		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		if(SadConsole.Global.KeyboardState.IsKeyDown(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyDown(Keys.RightShift))
 		{
 		    model.Update("J");
 		}else model.Update("j");
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Left))
             {
-		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
-		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		if(SadConsole.Global.KeyboardState.IsKeyDown(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyDown(Keys.RightShift))
 		{
 		    model.Update("H");
 		}else model.Update("h");

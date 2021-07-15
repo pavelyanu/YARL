@@ -7,7 +7,7 @@ Currently YARL is a beta. The goal of the beta is to find the gem hidden in the 
 
 Controls:
     Movement: vi-keys (hjkl) or arrow keys,
-    Fast-travel: SHIFT + (hjkl) (arrow keys do not always work),
+    Fast-travel: SHIFT + movement keys,
     Enter pick mode: ',',
     Enter equip mode: 'e',
     Enter unequip mode: 'r',
