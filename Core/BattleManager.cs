@@ -4,6 +4,7 @@ using System.Linq;
 using Serilog;
 using YARL.Actors;
 using Action = YARL.Actions.Action;
+using YARL.Items;
 using YARL.Topography;
 
 namespace YARL.Core
@@ -21,7 +22,6 @@ namespace YARL.Core
 	public bool targeting;
 	Action chosen_action;
 	List<Entity> targets;
-	bool endingTurn;
 
 	public BattleManager(Level _level, Player _player, GameLog _gameLog)
 	{
@@ -34,7 +34,6 @@ namespace YARL.Core
 	    initiative.AddRange(level.GetMonstersNearPlayer());
 	    initiative.Add(player);
 	    targeting = false;
-	    endingTurn = false;
 	    if (Roller.Roll(3) == 1)
 	    {
 		EndTurn();
@@ -51,7 +50,7 @@ namespace YARL.Core
 
 	public void EndTurn()
 	{
-	    foreach(var monster in GetMonsters())
+	    foreach(Monster monster in GetMonsters())
 	    {
 		Log.Information($"Logging actions of the {monster.name}");
 		ProcessMonsterAction(monster);
@@ -100,8 +99,8 @@ namespace YARL.Core
 			    break;
 			
 		    }
-		    var result = cursor + dir;
-		    var difference = player.position - result;
+		    Vector2 result = cursor + dir;
+		    Vector2 difference = player.position - result;
 		    float distance = difference.Length();
 		    Log.Information("Trying to move the cursor");
 		    Log.Information($"The distance is {distance}");
@@ -148,26 +147,7 @@ namespace YARL.Core
 			    }
 			    break;
 			case ' ':
-			    if (!endingTurn)
-			    {
-				gameLog.Add("This will end your turn. Are you sure? Enter y/n.");
-				endingTurn = true;
-			    } else {
-				gameLog.Add("This will end your turn. Are you sure? Enter y/n.");
-			    }
-			    break;
-			case 'y':
-			    if (endingTurn)
-			    {
-				EndTurn();
-				endingTurn = false;
-			    }
-			    break;
-			case 'n':
-			    if (endingTurn)
-			    {
-				endingTurn = false;
-			    }
+			    EndTurn();
 			    break;
 		    }
 		}
@@ -178,19 +158,19 @@ namespace YARL.Core
 	{
 	    if (movement_left != 0)
 	    {
-		var result = player.position + dir;
-		var previous = player.position;
+		Vector2 result = player.position + dir;
+		Vector2 previous = player.position;
 		if (!Occupied(result))
 		{
 		    if (level.Move(player, dir))
 		    {
-			foreach(var monster in GetMonsters())
+			foreach(Monster monster in GetMonsters())
 			{
 			    if (level.GetDistance(result, monster.position) == 2 &&
 				level.GetDistance(previous, monster.position) == 1)
 			    {
 				gameLog.Add($"{monster.name} tries to hit you as you run");
-				var action = monster.MakeMove(level).Item2;
+				Action action = monster.MakeMove(level).Item2;
 				if (action.range == 1)
 				{
 				    var targets = new List<Entity>();
@@ -212,7 +192,7 @@ namespace YARL.Core
 	public void ProcessMonsterMovement(Monster monster, Vector2 dir)
 	{
 	    Log.Information($"Started processing move by {dir} by {monster}");
-	    var result = monster.position + dir;
+	    Vector2 result = monster.position + dir;
 	    if (!Occupied(result) && room.Contains(result))
 	    {
 		Log.Information("The move is legal");
@@ -223,14 +203,14 @@ namespace YARL.Core
 
 	public void MoveCursor(Vector2 dir)
 	{
-	    var result = cursor + dir;
+	    Vector2 result = cursor + dir;
 	    cursor = result;
 	}
 
 	public void ProcessPlayerAction(Player player, Action action, List<Entity> targets)
 	{
 	    gameLog.Add(action.Do(targets, player, level));
-	    foreach (var target in targets)
+	    foreach (Entity target in targets)
 	    {
 		Log.Information($"{target.name}'s health is {target.health}");
 		if (!target.alive && target is Monster)
@@ -238,7 +218,7 @@ namespace YARL.Core
 		    Log.Information($"{target.name} is dead");
 		    gameLog.Add($"You have killed {target.name}");
 		    var monster = target as Monster;
-		    var loot = monster.GetLoot();
+		    List<Item> loot = monster.GetLoot();
 		    if (loot.Count != 0)
 		    {
 			foreach(var item in loot)
@@ -247,7 +227,7 @@ namespace YARL.Core
 			}
 		    }
 		    player.AddExp(monster.exp);
-		    gameLog.Add($"Player has earned {monster.exp} experience");
+		    gameLog.Add($"You has earned {monster.exp} experience");
 		    level.RemoveEntity(target);
 		    initiative.Remove(target);
 		}
@@ -258,8 +238,8 @@ namespace YARL.Core
 	public void ProcessMonsterAction(Monster monster)
 	{
 	    var tuple = monster.MakeMove(level);
-	    var vectors = tuple.Item1;
-	    var action = tuple.Item2;
+	    List<Vector2> vectors = tuple.Item1;
+	    Action action = tuple.Item2;
 	    Log.Information($"there are {vectors.Count} vectors of movement");
 	    foreach(var vector in vectors)
 	    {
@@ -278,13 +258,13 @@ namespace YARL.Core
 	    Log.Information("Finished Processing the action");
 	    if (!player.alive)
 	    {
-		gameLog.Add("Player has died!");
+		gameLog.Add("You has died!");
 	    }
 	}
 
 	bool Occupied(Vector2 position)
 	{
-	    foreach (var entity in initiative)
+	    foreach (Entity entity in initiative)
 	    {
 		if (entity.position == position)
 		    return true;
@@ -294,7 +274,7 @@ namespace YARL.Core
 
 	Entity GetEntityAt(Vector2 position)
 	{
-	    foreach (var entity in initiative)
+	    foreach (Entity entity in initiative)
 	    {
 		if (entity.position == position)
 		    return entity;
@@ -305,7 +285,7 @@ namespace YARL.Core
 	public List<Monster> GetMonsters()
 	{
 	    var result = new List<Monster>();
-	    foreach(var entity in initiative)
+	    foreach(Entity entity in initiative)
 	    {
 		if (entity is Monster)
 		    result.Add(entity as Monster);
@@ -317,7 +297,7 @@ namespace YARL.Core
 	{
 	    var result = new List<string>();
 	    int count = 1;
-	    foreach(var action in player.actions.Keys)
+	    foreach(string action in player.actions.Keys)
 	    {
 		result.Add($"{count++} - {action}");
 	    }
@@ -329,12 +309,6 @@ namespace YARL.Core
 	    var result = new List<string>();
 	    result.Add($"movement : {movement_left}");
 	    result.Add($"actions : {action_left}");
-	    result.Add($"target mode ^ {targeting}");
-	    if (targeting)
-	    {
-		var distance = (cursor - player.position).Length();
-		result.Add($"the distance to target is {distance}");
-	    }
 	    return result;
 	}
     }

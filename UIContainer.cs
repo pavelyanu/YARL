@@ -143,8 +143,8 @@ namespace YARL
                 SadConsole.Settings.ToggleFullScreen();
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Up))
             {
-		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
-		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		if(SadConsole.Global.KeyboardState.IsKeyDown(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyDown(Keys.RightShift))
 		{
 		    model.Update("K");
 		}else model.Update("k");
@@ -167,8 +167,8 @@ namespace YARL
                 CenterOnActor(model.level.GetPlayerPosition());
             }else if (SadConsole.Global.KeyboardState.IsKeyPressed(Keys.Right))
             {
-		if(SadConsole.Global.KeyboardState.IsKeyPressed(Keys.LeftShift) ||
-		   SadConsole.Global.KeyboardState.IsKeyPressed(Keys.RightShift))
+		if(SadConsole.Global.KeyboardState.IsKeyDown(Keys.LeftShift) ||
+		   SadConsole.Global.KeyboardState.IsKeyDown(Keys.RightShift))
 		{
 		    model.Update("L");
 		}else model.Update("l");
@@ -222,6 +222,7 @@ namespace YARL
 	    } else if (model.leveling)
 	    {
 		MainConsole.Print(0, MainConsole.Height / 2, "You have to level up before you can continue");
+		MainConsole.Print(0, MainConsole.Height / 2 + 1, "Use jk or Up Down to siwitch between stats and hl or Left right to change them");
 	    } else 
 	    {
 		var array = model.DrawOnMain();

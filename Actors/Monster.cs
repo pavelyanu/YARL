@@ -6,6 +6,7 @@ using YARL.Actions;
 using YARL.Core;
 using YARL.Drawing;
 using YARL.Items;
+using YARL.Topography;
 
 namespace YARL.Actors
 {
@@ -30,13 +31,13 @@ namespace YARL.Actors
 	    exp = _exp;
 	    lootChance = _lootchance;
 	    actions.Add(_action.name, _action);
-	    inventory = new MonsterInventory();
+	    inventory = new Inventory();
 	} 
 	public (List<Vector2>, Action) MakeMove(Level level)
 	{
 	    Log.Information($"Starting to plan the move");
 	    var vectors = new List<Vector2>();    
-	    var action = actions.Values.ToList()[0];
+	    Action action = actions.Values.ToList()[0];
 	    Log.Information($"Action is {action.name}");
 	    int distance = level.GetDistance(position, level.GetPlayerPosition()); 
 	    Log.Information($"My position is {position}");
@@ -44,16 +45,16 @@ namespace YARL.Actors
 	    Log.Information($"The distance to the player is {distance}");
 	    if (distance > action.range){
 		Log.Information("The distance is too big");
-		var tilesToPlayer = level.GetLine(position, level.GetPlayerPosition());
+		List<Tile> tilesToPlayer = level.GetLine(position, level.GetPlayerPosition());
 		tilesToPlayer.RemoveAt(0);
 		tilesToPlayer.RemoveAt(tilesToPlayer.Count - 1);
-		foreach(var tile in tilesToPlayer)
+		foreach(Tile tile in tilesToPlayer)
 		{
 		    Log.Information($"The tile {tile.position} is on the way to player");
 		}
 		Log.Information($"First tile of the way to player is {tilesToPlayer[0].position}");
 		vectors.Add(tilesToPlayer[0].position - position);
-		var previousPosition = position + vectors[0];
+		Vector2 previousPosition = position + vectors[0];
 		Log.Information($"Vector {vectors[0]} will lead to it");
 		tilesToPlayer.RemoveAt(0);
 		if (tilesToPlayer.Count != 0)
@@ -78,12 +79,12 @@ namespace YARL.Actors
 	public List<Item> GetLoot()
 	{
 	    var result = new List<Item>();
-	    foreach(var item in inventory.items)
+	    foreach(Item item in inventory.items.Values)
 	    {
 		int x = Roller.Roll(100);
 		if (x < lootChance * 100)
 		{
-		    result.Add(item.Value);
+		    result.Add(item);
 		}
 	    }
 	    return result;

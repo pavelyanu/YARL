@@ -91,9 +91,9 @@ namespace YARL.Actions
 		{
 		    int damage = Roller.Roll(dice, numberOfDice) + modifier * numberOfDice;
 		    target.Inflict(damage);
-		    sb.AppendLine($"{actor.name} { have } hit {target.name} and dealt {damage} damage");
+		    sb.AppendLine($"{actor.name} { have } hit {target.name.ToLower()} and dealt {damage} damage");
 		} else {
-		    sb.AppendLine($"{actor.name} { have } missed you {target.name}");
+		    sb.AppendLine($"{actor.name} { have } missed {target.name.ToLower()}");
 		}
 	    }
 	    sb.Remove(sb.Length - 1, 1);

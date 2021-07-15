@@ -42,13 +42,13 @@ namespace YARL.Items
 	public string Equip(Player player)
 	{
 	    player.AddAction(action);
-	    return $"Upon equipping this item you realize that now you can make {action.name}";
+	    return $"Upon equipping this item you realize that now you can a make {action.name}";
 	}
 
 	public string UnEquip(Player player)
 	{
 	    player.RemoveAction(action);
-	    return $"Upon unequipping this item you realize that now you can't make {action.name}";
+	    return $"Upon unequipping this item you realize that now you can't a make {action.name}";
 	}
     }
 
@@ -121,7 +121,7 @@ namespace YARL.Items
 	public string Use(Player player)
 	{
 	    player.LevelTransfer();
-	    return "You attempet to use teleportation stone";
+	    return "You attempt to use the teleportation stone";
 	}
     }
 

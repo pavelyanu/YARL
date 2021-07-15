@@ -20,7 +20,7 @@ namespace YARL.Actors
         public string Equip(Item item)
         {
             if (!items.ContainsKey(item.name))
-                throw new ArgumentException($"{item.name} is not in the inventory");
+                throw new ArgumentException($"{item.name} is no in the inventory");
 	    if (!item.equipable)
                 throw new ArgumentException($"{item.name} is not equipable");
             if (!equipment.ContainsKey(item.equipmentType) || equipment[item.equipmentType] is null)
@@ -70,7 +70,7 @@ namespace YARL.Actors
         public List<Item> GetEquipable()
         {
             var result = new List<Item>();
-            foreach (var item in items.Values)
+            foreach (Item item in items.Values)
             {
                 if (item.equipable)
                     result.Add(item);
@@ -81,7 +81,7 @@ namespace YARL.Actors
 	public List<Item> GetEquipped()
 	{
 	    var result = new List<Item>();
-            foreach (var item in equipment.Values)
+            foreach (Item item in equipment.Values)
             {
                 result.Add(item);
             }
@@ -91,7 +91,7 @@ namespace YARL.Actors
         public List<Item> GetUsable()
         {
             var result = new List<Item>();
-            foreach (var item in items.Values)
+            foreach (Item item in items.Values)
             {
                 if (item.usable)
                     result.Add(item);
@@ -102,7 +102,7 @@ namespace YARL.Actors
         public List<Item> GetAll(PossessionType possessionType)
         {
             var result = new List<Item>();
-            foreach (var item in items.Values)
+            foreach (Item item in items.Values)
             {
                 if (item.possessionType == possessionType)
                     result.Add(item);
@@ -113,7 +113,7 @@ namespace YARL.Actors
         public List<Item> GetAll(EquipmentType equipmentType)
         {
             var result = new List<Item>();
-            foreach (var item in items.Values)
+            foreach (Item item in items.Values)
             {
                 if (item.equipmentType == equipmentType)
                     result.Add(item);

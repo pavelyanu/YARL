@@ -4,7 +4,7 @@ using YARL.Items;
 
 namespace YARL.Actors
 {
-    public abstract class Inventory
+    public class Inventory
     {
         public Dictionary<string, Item> items;	
 

@@ -1,4 +1,5 @@
 using System;
+using Serilog;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace YARL.Topography
 {
     public class Map
     {
-	Dictionary<Vector2, Tile> tiles;
+	Tile[,] tiles;
 	public List<Rectangle> Rooms;
 	public int Height { get; set; }
 	public int Width { get; set; }
@@ -15,50 +16,53 @@ namespace YARL.Topography
 	{
 	    Height = h;
 	    Width = w;
-	    tiles = new Dictionary<Vector2, Tile>();
+	    tiles = new Tile[w, h];
 	    Rooms = new List<Rectangle>();
 	}
 
-	public Tile this[Vector2 key]
-	{
-	    get { 
-		if (tiles.ContainsKey(key))
-		    return tiles[key];
-		else 
-		    return null;
+        public Tile this[Vector2 key] {
+            get
+	    {
+		if (key.X < Width && key.X >= 0 && key.Y < Height && key.Y >= 0)
+		{
+		    return tiles[(int) key.X, (int) key.Y];
+		}
+		return null;
 	    }
-	    set {
-		tiles[key] = value;
+	    set
+	    {
+		if (key.X < Width && key.X >= 0 && key.Y < Height && key.Y >= 0)
+		{
+		    tiles[(int) key.X, (int) key.Y] = value;
+		} 
 	    }
-	}
+        }
 
-	public Tile this[int x, int y]
-	{
-	    get { 
-		Vector2 key = new Vector2(x, y);
-		if (tiles.ContainsKey(key))
-		    return tiles[key];
-		else 
-		    return null;
+	public Tile this[int x, int y] {
+            get
+	    {
+		if (x < Width && x >= 0 && y < Height && y >= 0)
+		{
+		    return tiles[x, y];
+		}
+		return null;
 	    }
-
-	    set {
-		Vector2 key = new Vector2(x, y);
-		tiles[key] = value;
+	    set
+	    {
+		if (x < Width && x >= 0 && y < Height && y >= 0)
+		{
+		    tiles[x, y] = value;
+		}
 	    }
-	}
+        }
 
 	public void SetCell(Tile tile)
 	{
-	    tiles[tile.position] = tile;
+	    this[tile.position] = tile;
 	}
 
-	public bool isDoor(Vector2 v)
-	{
-	    if (this[v] is not null && this[v].glyph == '+')
-		return true;
-	    return false;
-	}
+        public bool isDoor(Vector2 v) =>
+            this[v] is not null && this[v].glyph == '+';
 
 	public bool IsDoor(int x, int y)
 	{
@@ -68,8 +72,9 @@ namespace YARL.Topography
 
 	public IEnumerable<Tile> GetLine(
 		int xOrigin, int yOrigin, int xDestination, int yDestination
-		)
+	)
 	{
+	    Log.Information("Running GetLine");
 	    xOrigin = ClampX( xOrigin );
 	    yOrigin = ClampY( yOrigin );
 	    xDestination = ClampX( xDestination );
@@ -83,7 +88,7 @@ namespace YARL.Topography
 	    int err = dx - dy;
 	    while ( true )
 	    {
-		if (tiles.ContainsKey(new Vector2(xOrigin, yOrigin)))
+		if (this[new Vector2(xOrigin, yOrigin)] is not null)
 		{
 		    yield return this[ xOrigin, yOrigin ];
 		} else
@@ -121,7 +126,7 @@ namespace YARL.Topography
 
 	public Rectangle GetRoom( Vector2 position)
 	{
-	    foreach(var room in Rooms)
+	    foreach(Rectangle room in Rooms)
 	    {
 		if (room.Contains(position))
 		{

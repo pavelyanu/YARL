@@ -21,7 +21,6 @@ namespace YARL.Core
 	List<Entity> entities;
 	GameLog gameLog;
 	Dictionary<Rectangle, List<Entity>> roomPopulation;
-	MapGenerator mapGenerator;
 	Dictionary<char, Item> chooseMap;
 	Player player;
 	public Rectangle currentRoom { get => map.GetRoom(player.position); }
@@ -50,7 +49,7 @@ namespace YARL.Core
 	    printedPreFinal = false;
 	    roomPopulation = new Dictionary<Rectangle, List<Entity>>();
 	    chooseMap = new Dictionary<char, Item>();
-	    mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
+	    var mapGenerator = new MapGenerator(Width, Height, _maxRooms, _roomMaxSize, _roomMinSize);
 	    entities = new List<Entity>();
 	    entityFactory = new EntityFactory(new DefaultDraw());
 	    itemFactory = new ItemFactory(new DefaultDraw());
@@ -139,7 +138,7 @@ namespace YARL.Core
 	    Dictionary<char, Item> result = new Dictionary<char, Item>();
 	    for (int i = 0; i < items.Count; i++)
 	    {
-		result[(char) (i + 97)] = items[i];
+		result[(char) (i + 'a')] = items[i];
 	    }
 	    return result;
 	}
@@ -148,7 +147,7 @@ namespace YARL.Core
 	{
 	    if (!playerInCorridor)
 	    {
-		var tiles = map.GetTilesInsideRoom(currentRoom);
+		List<Tile> tiles = map.GetTilesInsideRoom(currentRoom);
 		foreach (var tile in tiles)
 		{
 		    tile.visible = true;
@@ -156,14 +155,10 @@ namespace YARL.Core
 	    } else 
 	    {
 		var vectors = new List<Vector2>();
-		vectors.Add(new Vector2(-1, -1));
-		vectors.Add(new Vector2(0, -1));
-		vectors.Add(new Vector2(1, -1));
-		vectors.Add(new Vector2(1, 0));
-		vectors.Add(new Vector2(1, 1));
-		vectors.Add(new Vector2(0, 1));
-		vectors.Add(new Vector2(-1, 1));
-		vectors.Add(new Vector2(-1, 0));
+		for (int x = -1 ; x <= 1 ; ++x)
+                    for (int y = -1 ; y <= 1 ; ++y)
+                        if ((x, y) != (0, 0))
+                            vectors.Add(new Vector2(x, y));
 		foreach (var vector in vectors)
 		{
 		    this[player.position + vector].visible = true;
@@ -173,52 +168,44 @@ namespace YARL.Core
 
 	public void Prepare()
 	{
+	    Rectangle firstRoom = Rooms[0];
+	    player.position = firstRoom.Center;
+	    AddPlayer(player);
+	    Rectangle lastRoom = Rooms[Rooms.Count - 1];
 	    if (level == 1)
 	    {
-		var firstRoom = Rooms[0];
-		player.position = firstRoom.Center;
-		AddPlayer(player);
 		PutItem(itemFactory.CreateDagger(), firstRoom.Center + new Vector2(0, 1));
 		PutItem(itemFactory.CreateHealingPotion(), firstRoom.Center + new Vector2(1, 1));
-		var lastRoom = Rooms[Rooms.Count - 1];
-		var ork1 = entityFactory.CreateOrc();
-		var gem = itemFactory.CreateGoalGem();
+		Entity ork1 = entityFactory.CreateOrc();
+		Item gem = itemFactory.CreateGoalGem();
 		ork1.inventory.Add(itemFactory.CreateGoalGem());
 		ork1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
 		AddEntity(ork1);
-		var bowmen = entityFactory.CreateGoblinWithBow();
+		Entity bowmen = entityFactory.CreateGoblinWithBow();
 		bowmen.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
 		AddEntity(bowmen);
 	    } else if (level == 2)
 	    {
-		var firstRoom = Rooms[0];
-		player.position = firstRoom.Center;
-		AddPlayer(player);
-		var lastRoom = Rooms[Rooms.Count - 1];
-		var necromanser = entityFactory.CreateNecromancer();
+		Entity necromanser = entityFactory.CreateNecromancer();
 		necromanser.inventory.Add(itemFactory.CreateGoalGem());
 		necromanser.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
 		AddEntity(necromanser);
-		var ghoul1 = entityFactory.CreateGhoul();
+		Entity ghoul1 = entityFactory.CreateGhoul();
 		ghoul1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
 		AddEntity(ghoul1);
-		var ghoul2 = entityFactory.CreateGhoul();
+		Entity ghoul2 = entityFactory.CreateGhoul();
 		ghoul2.position = lastRoom.Center + new Vector2(Roller.Roll(3), 3);
 		AddEntity(ghoul2);
 	    } else if (level == 3)
 	    {
-		var firstRoom = Rooms[0];
-		player.position = firstRoom.Center;
-		AddPlayer(player);
-		var lastRoom = Rooms[Rooms.Count - 1];
-		var king = entityFactory.CreateGnomeKing();
+		Entity king = entityFactory.CreateGnomeKing();
 		king.inventory.Add(itemFactory.CreateGoalGem());
 		king.position = lastRoom.Center + new Vector2(Roller.Roll(3), 2);
 		AddEntity(king);
-		var archer1 = entityFactory.CreateArcherGnome();
+		Entity archer1 = entityFactory.CreateArcherGnome();
 		archer1.position = lastRoom.Center + new Vector2(Roller.Roll(3), 1);
 		AddEntity(archer1);
-		var archer2 = entityFactory.CreateArcherGnome();
+		Entity archer2 = entityFactory.CreateArcherGnome();
 		archer2.position = lastRoom.Center + new Vector2(Roller.Roll(3), 3);
 		AddEntity(archer2);
 	    }
@@ -231,10 +218,7 @@ namespace YARL.Core
 		if (Rooms[0] == room || Rooms[Rooms.Count - 1] == room)
 		    continue;
 
-		int number;
-		if (level == 1) number = Roller.Roll(3) - 1;
-		else number = Roller.Roll(4) - 1;
-		
+                int number = Roller.Roll(level == 1 ? 3 : 4) - 1;
 		for (int i = 0; i < number; i++)
 		{
 		    int type = Roller.Roll(6);
@@ -245,15 +229,15 @@ namespace YARL.Core
 			case 3:
 			    if (level == 1)
 			    {
-				var goblin = entityFactory.CreateGoblin();
+				Entity goblin = entityFactory.CreateGoblin();
 				goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(goblin);
 			    } else if (level == 2) 
 			    {
 				int roll = Roller.Roll(5);
-				var zombie1 = entityFactory.CreateZombie();
-				var zombie2 = entityFactory.CreateZombie();
-				var skeleton = entityFactory.CreateSkeleton();
+				Entity zombie1 = entityFactory.CreateZombie();
+				Entity zombie2 = entityFactory.CreateZombie();
+				Entity skeleton = entityFactory.CreateSkeleton();
 				if (roll < 3)
 				{
 				    zombie1.position = room.Center + new Vector2(Roller.Roll(3), i);
@@ -271,7 +255,7 @@ namespace YARL.Core
 				}
 			    } else if (level == 3)
 			    {
-				var gnome = entityFactory.CreateGnome();
+				Entity gnome = entityFactory.CreateGnome();
 				gnome.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(gnome);
 			    }
@@ -280,17 +264,17 @@ namespace YARL.Core
 			case 5:
 			    if (level == 1)
 			    {
-				var bowmen = entityFactory.CreateGoblinWithBow();
+				Entity bowmen = entityFactory.CreateGoblinWithBow();
 				bowmen.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(bowmen);
 			    } else if (level == 2)
 			    {
-				var ghoul = entityFactory.CreateGhoul();
+				Entity ghoul = entityFactory.CreateGhoul();
 				ghoul.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(ghoul);
 			    } else if (level == 3)
 			    {
-				var gnome = entityFactory.CreateArcherGnome();
+				Entity gnome = entityFactory.CreateArcherGnome();
 				gnome.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(gnome);
 			    }
@@ -298,21 +282,21 @@ namespace YARL.Core
 			case 6:
 			    if (level == 1)
 			    {
-				var goblin = entityFactory.CreateGoblin();
+				Entity goblin = entityFactory.CreateGoblin();
 				goblin.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(goblin);
 			    } else if (level == 2)
 			    {
-				var ork = entityFactory.CreateOrc();
+				Entity ork = entityFactory.CreateOrc();
 				ork.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(ork);
 			    } else if (level == 3)
 			    {
 				
-				var ghoul1 = entityFactory.CreateGhoul();
+				Entity ghoul1 = entityFactory.CreateGhoul();
 				ghoul1.position = room.Center + new Vector2(Roller.Roll(3), i);
 				AddEntity(ghoul1);
-				var ghoul2 = entityFactory.CreateGhoul();
+				Entity ghoul2 = entityFactory.CreateGhoul();
 				ghoul2.position = room.Center + new Vector2(Roller.Roll(3), i + 1);
 				AddEntity(ghoul2);
 			    }
@@ -327,7 +311,7 @@ namespace YARL.Core
 	public void AddPlayer(Player p)
 	{
 	    player = p;
-	    var room = map.GetRoom(p.position);
+	    Rectangle room = map.GetRoom(p.position);
 	    if (!room.IsEmpty)
 		AddToRoom(room, player);
 	}
@@ -339,7 +323,7 @@ namespace YARL.Core
 
 	public bool Move(Player player, Vector2 dir)
 	{
-	    var result = player.position + dir;
+	    Vector2 result = player.position + dir;
 	    if (map[result].walkable)
 	    {
 		if (!playerInCorridor)
@@ -359,25 +343,16 @@ namespace YARL.Core
 	    return false;
 	}
 
-	public bool PlayerInRoomWithMonster()
-	{
-	    if (!playerInCorridor)
-	    {
-		if (roomPopulation[currentRoom].Count > 1)
-		{
-		    return true;
-		}
-	    }
-	    return false;
-	}
+        public bool PlayerInRoomWithMonster() =>
+            !playerInCorridor && roomPopulation[currentRoom].Count > 1;
 
 	public void PlayerPickItem(string name)
 	{
-	    var position = player.position;
+	    Vector2 position = player.position;
 	    if (map[position].items.Count != 0)
 	    {
 		Item item = null;
-		foreach(var i in map[position].items.Values)
+		foreach(Item i in map[position].items.Values)
 		{
 		    if (i.name == name)
 		    {
@@ -392,7 +367,7 @@ namespace YARL.Core
 
 	public void AddEntity(Entity entity)
 	{
-	    var room = map.GetRoom(entity.position);
+	    Rectangle room = map.GetRoom(entity.position);
 	    if (!room.IsEmpty)
 	    {
 		entities.Add(entity);
@@ -409,8 +384,8 @@ namespace YARL.Core
 
 	public bool Move(Entity entity, Vector2 dir)
 	{
-	    var result = entity.position + dir;
-	    var room = map.GetRoom(entity.position);
+	    Vector2 result = entity.position + dir;
+	    Rectangle room = map.GetRoom(entity.position);
 	    if (map[result].walkable && !room.IsEmpty)
 	    {
 		entity.Move(dir);
@@ -439,7 +414,7 @@ namespace YARL.Core
 	    var result = new List<Monster>();
 	    if (roomPopulation.ContainsKey(currentRoom))
 	    {
-		foreach (var entity in roomPopulation[currentRoom])
+		foreach (Entity entity in roomPopulation[currentRoom])
 		{
 		    if (entity is Monster)
 			result.Add(entity as Monster);
@@ -479,7 +454,7 @@ namespace YARL.Core
 	    }
 	    if(PlayerInRoomWithMonster())
 	    {
-		foreach(var monster in GetMonstersNearPlayer())
+		foreach(Monster monster in GetMonstersNearPlayer())
 		{
 		    result[(int) monster.position.X, (int) monster.position.Y] = monster.Draw();   
 		}
@@ -492,14 +467,15 @@ namespace YARL.Core
 	{
 	    var result = new List<string>();
 	    result.Add("Pick an Item");
-	    foreach(var item in chooseMap)
+	    foreach(char key in chooseMap.Keys)
 	    {
 		string amount = "";
-		if (item.Value.amount > 1)
+		Item item = chooseMap[key];
+		if (item.amount > 1)
 		{
-		    amount = $"({item.Value.amount})";
+		    amount = $"({item.amount})";
 		}
-		result.Add($"{item.Key} - {item.Value.name} {amount}");
+		result.Add($"{key} - {item.name} {amount}");
 	    }
 	    return result;
 	}

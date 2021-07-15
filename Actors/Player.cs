@@ -24,6 +24,7 @@ namespace YARL.Actors
 	) : base('@',_drawBehaviour, 6, "You", _str, _dex, _inte, _health)
 	{
 	    inventory = new PlayerInventory(this);
+	    lvl = 1;
 	    nextLvl = 10;
 	}
 
@@ -79,12 +80,14 @@ namespace YARL.Actors
 	    return result;
 	}
 
-	public List<string> DrawInfo()
+	public List<string> DrawInfo(int level)
 	{
 	    var result = new List<string>();
 	    result.Add($"health : {health}");
 	    result.Add($"ac. : {armor_class}");
+	    result.Add($"Current level: {lvl}");
 	    result.Add($"exp. to next level: {nextLvl - exp}");
+	    result.Add($"Current dungeon level: {level}");
 	    return result;
 	}
     }

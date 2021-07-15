@@ -89,7 +89,7 @@ namespace YARL.Core {
 		}
 	    } else 
 	    {
-		if ("qwertyuiopasdfghjklzxcvbnm".Contains(key))
+		if ('a' <= key && key <= 'z')
 		{
 		    ended = true;
 		}
@@ -127,7 +127,7 @@ namespace YARL.Core {
 		return level.DrawOnSide();
 	    } else if (characterManager.leveling)
 	    {
-		var result = characterManager.Draw();
+		List<string> result = characterManager.Draw();
 		result[characterManager.selectedLine] = result[characterManager.selectedLine].ToUpper();
 		return result;
 	    }
@@ -151,7 +151,7 @@ namespace YARL.Core {
 
 	public List<string> DrawOnUpperMiddle()
 	{
-	    return player.DrawInfo();
+	    return player.DrawInfo(level.level);
 	}
 
 	public List<string> DrawOnUpperRight()

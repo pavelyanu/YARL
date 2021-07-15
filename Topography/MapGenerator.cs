@@ -3,6 +3,7 @@ using System.Text;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog;
 
 namespace YARL.Topography
 {
@@ -178,6 +179,7 @@ namespace YARL.Topography
 
 	private void AddWalls(Map map)
 	{
+	    Log.Information("Running AddWalls");
 	    for (int x = 0; x < _width; x++)
 	    {
 		for (int y = 0; y < _height; y++) {
@@ -197,6 +199,7 @@ namespace YARL.Topography
 		    }
 		}
 	    }
+	    Log.Information("Finished AddWalls");
 	}
 
 	private string LogTile(Tile tile)

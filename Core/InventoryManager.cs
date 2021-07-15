@@ -25,7 +25,7 @@ namespace YARL.Core
 
 	public InventoryManager(Player p, GameLog _gameLog)
 	{
-	    inventory = p.inventory as PlayerInventory;
+	    inventory = (PlayerInventory) p.inventory;
 	    state = State.Overview;
 	    chooseMap = null;
 	    gameLog = _gameLog;
@@ -117,7 +117,7 @@ namespace YARL.Core
 	    Dictionary<char, Item> result = new Dictionary<char, Item>();
 	    for (int i = 0; i < items.Count; i++)
 	    {
-		result[(char) (i + 97)] = items[i];
+		result[(char) (i + 'a')] = items[i];
 	    }
 	    return result;
 	}
@@ -128,11 +128,11 @@ namespace YARL.Core
 	    switch (state)
 	    {
 		case State.Overview:
-		    foreach(var item in inventory.GetEquipped())
+		    foreach(Item item in inventory.GetEquipped())
 		    {
 			result.Add($"You have {item.name} equipped");
 		    }
-		    foreach(var item in inventory.items.Keys)
+		    foreach(string item in inventory.items.Keys)
 		    {
 			if (inventory.items[item].amount == 1)
 			{
@@ -142,16 +142,15 @@ namespace YARL.Core
 			    result.Add($"{item} ({inventory.items[item].amount})");
 			}
 		    }
-		    result.Add($"");
-		    result.Add($"Health : {inventory.player.health}");
 		    return result;
 		case State.SelectingEquipment:
 		case State.SelectingEquipped:
 		case State.SelectingUsables:
 		    result.Add("Select an item");
-		    foreach(var item in chooseMap)
+		    foreach(char key in chooseMap.Keys)
 		    {
-			result.Add($"{item.Key} - {item.Value.name}");
+			Item item = chooseMap[key];
+			result.Add($"{key} - {item.name}");
 		    }
 		    return result;
 		default:
